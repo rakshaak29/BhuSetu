@@ -8,16 +8,16 @@ export async function GET(
 ) {
   try {
     const { parcelId } = await params;
-    const parcel = repository.getParcelById(parcelId);
+    const parcel = await repository.getParcelById(parcelId);
 
     if (!parcel) {
       return NextResponse.json({ error: `Parcel ${parcelId} not found` }, { status: 404 });
     }
 
-    const events = repository.getEventsForParcel(parcelId);
+    const events = await repository.getEventsForParcel(parcelId);
     const ledgerBlocks = fabricLedgerEngine.getHistoryForParcel(parcelId);
 
-    repository.logAudit({
+    await repository.logAudit({
       correlationId: `req-${Math.random().toString(36).substring(2, 9)}`,
       actorId: 'authorized-officer',
       actorRole: 'REVENUE_CHECKER',

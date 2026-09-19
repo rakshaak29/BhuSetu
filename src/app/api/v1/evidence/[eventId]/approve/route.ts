@@ -13,7 +13,7 @@ export async function POST(
     const { actorId, approvalReason, action } = body;
 
     const user = MOCK_USERS[actorId] || MOCK_USERS['user-rev-checker-01'];
-    const event = repository.getEvidenceEvent(eventId);
+    const event = await repository.getEvidenceEvent(eventId);
 
     if (!event) {
       return NextResponse.json({ error: `Evidence event ${eventId} not found` }, { status: 404 });
@@ -25,7 +25,7 @@ export async function POST(
 
     // SERVER-SIDE MAKER-CHECKER SEPARATION ENFORCEMENT
     if (user.actorId === event.makerActorId) {
-      repository.logAudit({
+      await repository.logAudit({
         correlationId: `req-${Math.random().toString(36).substring(2, 9)}`,
         actorId: user.actorId,
         actorRole: user.role,
@@ -47,9 +47,9 @@ export async function POST(
       event.checkerActorId = user.actorId;
       event.checkerRole = user.role;
       event.approvalReason = approvalReason || 'Rejected during checker review';
-      repository.saveEvidenceEvent(event);
+      await repository.saveEvidenceEvent(event);
 
-      repository.logAudit({
+      await repository.logAudit({
         correlationId: `req-${Math.random().toString(36).substring(2, 9)}`,
         actorId: user.actorId,
         actorRole: user.role,
@@ -75,19 +75,19 @@ export async function POST(
     event.ledgerTxId = ledgerResult.txId;
     event.status = 'COMMITTED';
 
-    repository.saveEvidenceEvent(event);
+    await repository.saveEvidenceEvent(event);
 
     // Update Parcel active state
-    const parcel = repository.getParcelById(event.parcelId);
+    const parcel = await repository.getParcelById(event.parcelId);
     if (parcel) {
       parcel.activeEventId = event.eventId;
       if (!parcel.disputeHold) {
         parcel.verificationStatus = 'VERIFIED';
       }
-      repository.updateParcel(parcel);
+      await repository.updateParcel(parcel);
     }
 
-    repository.logAudit({
+    await repository.logAudit({
       correlationId: `req-${Math.random().toString(36).substring(2, 9)}`,
       actorId: user.actorId,
       actorRole: user.role,
