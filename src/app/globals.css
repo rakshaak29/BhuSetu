@@ -4,6 +4,37 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased font-sans min-h-screen flex flex-col;
+    background-color: #FAF9F5;
+    color: #14191F;
+    @apply antialiased font-sans min-h-screen flex flex-col;
+    background-image: radial-gradient(rgba(20, 25, 31, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
+}
+
+@keyframes verifyPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(30, 123, 77, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(30, 123, 77, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(30, 123, 77, 0);
+  }
+}
+
+.animate-pulse-verify {
+  animation: verifyPulse 2s infinite;
+}
+
+.parchment-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E4E2DC;
+  box-shadow: 0 1px 2px 0 rgba(20, 25, 31, 0.03);
+}
+
+.parchment-well {
+  background-color: #F5F4F0;
+  border: 1px solid #E4E2DC;
 }
