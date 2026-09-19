@@ -63,11 +63,34 @@ const config: Config = {
             text: '#475569',
             badge: '#64748B',
           }
+        },
+        // Organic / Natural Design Tokens
+        organic: {
+          bg: '#FDFCF8',           // Rice Paper / Off-white
+          fg: '#2C2C24',           // Deep Loam / Charcoal
+          primary: '#5D7052',      // Moss Green
+          'primary-hover': '#4E5E44',
+          'primary-fg': '#F3F4F1', // Pale Mist
+          clay: '#C18C5D',         // Terracotta / Clay
+          'clay-hover': '#AF7B4E',
+          'clay-fg': '#FFFFFF',
+          sand: '#E6DCCD',         // Sand / Beige
+          bark: '#4A4A40',         // Bark
+          stone: '#F0EBE5',        // Stone
+          'stone-muted': '#78786C',// Dried Grass
+          timber: '#DED8CF',       // Raw Timber
+          destructive: '#A85448',  // Burnt Sienna
         }
       },
+      boxShadow: {
+        'soft': '0 4px 20px -2px rgba(93, 112, 82, 0.15)',
+        'float': '0 10px 40px -10px rgba(193, 140, 93, 0.20)',
+        'lift': '0 20px 40px -10px rgba(93, 112, 82, 0.15)',
+      },
       fontFamily: {
-        sans: ['Geist', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'IBM Plex Mono', 'monospace'],
+        serif: ['var(--font-fraunces)', 'Georgia', 'serif'],
+        sans: ['var(--font-nunito)', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'JetBrains Mono', 'monospace'],
       }
     },
   },
