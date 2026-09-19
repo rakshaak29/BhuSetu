@@ -15,7 +15,7 @@ export async function POST(
     const { actorId, disputeHold, disputeReason, disputeReference } = body;
 
     const user = MOCK_USERS[actorId] || MOCK_USERS['user-dispute-01'];
-    const parcel = repository.getParcelById(parcelId);
+    const parcel = await repository.getParcelById(parcelId);
 
     if (!parcel) {
       return NextResponse.json({ error: `Parcel ${parcelId} not found` }, { status: 404 });
@@ -30,12 +30,12 @@ export async function POST(
     const vRef = generateVerificationReference();
 
     const disputeEvent: EvidenceEvent = {
-      eventId: `evt-${Math.random().toString(36).substring(2, 9)}`,
+      eventId: `evt-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 7)}`,
       parcelId,
       eventType,
       evidenceType: 'COURT_ORDER',
       sha256: sha,
-      objectRef: `s3://bhusetu-private-evidence/2026/dispute-${sha.substring(0, 8)}.pdf.enc`,
+      objectRef: `s3://bhusetu-evidence-459532536558-apsouth1/evidence/disputes/${sha.substring(0, 8)}.pdf.enc`,
       sourceSystem: user.name,
       sourceReference: disputeReference || 'RELEASE-REF',
       previousEventId: parcel.activeEventId,
@@ -54,7 +54,7 @@ export async function POST(
     const ledgerResult = fabricLedgerEngine.commitEvent(disputeEvent, ['RevenueOrg', 'SurveyOrg']);
     disputeEvent.ledgerTxId = ledgerResult.txId;
     disputeEvent.status = 'COMMITTED';
-    repository.saveEvidenceEvent(disputeEvent);
+    await repository.saveEvidenceEvent(disputeEvent);
 
     // Update parcel state
     parcel.disputeHold = !!disputeHold;
@@ -62,9 +62,9 @@ export async function POST(
     parcel.disputeReference = disputeHold ? disputeReference : undefined;
     parcel.verificationStatus = disputeHold ? 'DISPUTED' : 'VERIFIED';
     parcel.activeEventId = disputeEvent.eventId;
-    repository.updateParcel(parcel);
+    await repository.updateParcel(parcel);
 
-    repository.logAudit({
+    await repository.logAudit({
       correlationId: `req-${Math.random().toString(36).substring(2, 9)}`,
       actorId: user.actorId,
       actorRole: user.role,

@@ -16,10 +16,10 @@ export async function POST(req: NextRequest) {
     }
 
     const cleanRef = reference.trim().toUpperCase();
-    const evidence = repository.getEvidenceByReference(cleanRef);
+    const evidence = await repository.getEvidenceByReference(cleanRef);
 
     // Audit trace for public verification check
-    repository.logAudit({
+    await repository.logAudit({
       correlationId: `req-${Math.random().toString(36).substring(2, 9)}`,
       actorId: 'public-verifier',
       actorRole: 'CITIZEN',
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(response);
     }
 
-    const parcel = repository.getParcelById(evidence.parcelId);
+    const parcel = await repository.getParcelById(evidence.parcelId);
     const maskedParcelRef = parcel ? maskParcelReference(parcel.stateParcelId) : 'XX-***-XXX';
 
     // Status evaluation rules (Dispute overrides verified; Superseded overrides verified)

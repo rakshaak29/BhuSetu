@@ -30,9 +30,9 @@ export async function POST(req: NextRequest) {
     }
 
     const sha256Hash = calculateSha256(fileContent);
-    const evidence = repository.getEvidenceByHash(sha256Hash);
+    const evidence = await repository.getEvidenceByHash(sha256Hash);
 
-    repository.logAudit({
+    await repository.logAudit({
       correlationId: `req-${Math.random().toString(36).substring(2, 9)}`,
       actorId: 'public-verifier',
       actorRole: 'CITIZEN',
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(response);
     }
 
-    const parcel = repository.getParcelById(evidence.parcelId);
+    const parcel = await repository.getParcelById(evidence.parcelId);
     const maskedParcelRef = parcel ? maskParcelReference(parcel.stateParcelId) : 'XX-***-XXX';
 
     if (parcel?.disputeHold) {
