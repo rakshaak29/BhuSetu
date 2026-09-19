@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     }
 
     const user = MOCK_USERS[actorId] || MOCK_USERS['user-reg-maker-01'];
-    const parcel = repository.getParcelById(parcelId);
+    const parcel = await repository.getParcelById(parcelId);
 
     if (!parcel) {
       return NextResponse.json({ error: `Parcel ${parcelId} not found` }, { status: 404 });
@@ -23,16 +23,16 @@ export async function POST(req: NextRequest) {
     const sha256Hash = calculateSha256(fileContent);
     const verificationRef = generateVerificationReference();
 
-    // Store evidence document in mock off-chain S3
-    repository.storeDocument(sha256Hash, fileContent);
+    // Store evidence document to real S3
+    await repository.storeDocument(sha256Hash, fileContent);
 
     const newEvent: EvidenceEvent = {
-      eventId: `evt-${Math.random().toString(36).substring(2, 9)}`,
+      eventId: `evt-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 7)}`,
       parcelId,
       eventType: parcel.activeEventId ? 'MUTATION' : 'ISSUE',
       evidenceType,
       sha256: sha256Hash,
-      objectRef: `s3://bhusetu-private-evidence/2026/09/${sha256Hash.substring(0, 10)}.pdf.enc`,
+      objectRef: `s3://bhusetu-evidence-459532536558-apsouth1/evidence/documents/${sha256Hash}.enc`,
       sourceSystem,
       sourceReference,
       previousEventId: parcel.activeEventId,
@@ -43,9 +43,9 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString()
     };
 
-    repository.saveEvidenceEvent(newEvent);
+    await repository.saveEvidenceEvent(newEvent);
 
-    repository.logAudit({
+    await repository.logAudit({
       correlationId: `req-${Math.random().toString(36).substring(2, 9)}`,
       actorId: user.actorId,
       actorRole: user.role,

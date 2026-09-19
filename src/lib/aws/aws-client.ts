@@ -38,6 +38,10 @@ export const dynamoDocClient = DynamoDBDocumentClient.from(rawDynamoClient, {
   marshallOptions: { removeUndefinedValues: true },
 });
 
+// ─────────────────────────────────────
+// S3 Evidence Operations
+// ─────────────────────────────────────
+
 /**
  * Upload canonical land evidence document directly to real Amazon S3 bucket
  */
@@ -86,6 +90,10 @@ export async function getEvidenceFromS3(key: string): Promise<Buffer | null> {
   }
 }
 
+// ─────────────────────────────────────
+// DynamoDB Parcel Operations
+// ─────────────────────────────────────
+
 /**
  * Save parcel record directly to real Amazon DynamoDB
  */
@@ -117,6 +125,49 @@ export async function getParcelFromDynamo(parcelId: string): Promise<Parcel | nu
 }
 
 /**
+ * Scan all parcels from real Amazon DynamoDB
+ */
+export async function getAllParcelsFromDynamo(): Promise<Parcel[]> {
+  try {
+    const res = await dynamoDocClient.send(
+      new ScanCommand({
+        TableName: REAL_AWS_RESOURCES.tables.parcels,
+      })
+    );
+    return (res.Items as Parcel[]) || [];
+  } catch (err) {
+    console.warn('DynamoDB scan failed for parcels:', err);
+    return [];
+  }
+}
+
+/**
+ * Find parcel by State Parcel ID (scan with filter)
+ */
+export async function getParcelByStateIdFromDynamo(stateParcelId: string): Promise<Parcel | null> {
+  try {
+    const res = await dynamoDocClient.send(
+      new ScanCommand({
+        TableName: REAL_AWS_RESOURCES.tables.parcels,
+        FilterExpression: 'stateParcelId = :sid',
+        ExpressionAttributeValues: { ':sid': stateParcelId },
+      })
+    );
+    if (res.Items && res.Items.length > 0) {
+      return res.Items[0] as Parcel;
+    }
+    return null;
+  } catch (err) {
+    console.warn(`DynamoDB scan failed for stateParcelId ${stateParcelId}:`, err);
+    return null;
+  }
+}
+
+// ─────────────────────────────────────
+// DynamoDB Evidence Operations
+// ─────────────────────────────────────
+
+/**
  * Save evidence event to real Amazon DynamoDB
  */
 export async function saveEvidenceToDynamo(evidence: EvidenceEvent): Promise<void> {
@@ -126,6 +177,24 @@ export async function saveEvidenceToDynamo(evidence: EvidenceEvent): Promise<voi
       Item: evidence,
     })
   );
+}
+
+/**
+ * Get evidence event by eventId from real DynamoDB
+ */
+export async function getEvidenceByEventIdFromDynamo(eventId: string): Promise<EvidenceEvent | null> {
+  try {
+    const res = await dynamoDocClient.send(
+      new GetCommand({
+        TableName: REAL_AWS_RESOURCES.tables.evidence,
+        Key: { eventId },
+      })
+    );
+    return (res.Item as EvidenceEvent) || null;
+  } catch (err) {
+    console.warn(`DynamoDB query failed for evidence ${eventId}:`, err);
+    return null;
+  }
 }
 
 /**
@@ -152,6 +221,79 @@ export async function getEvidenceByRefFromDynamo(reference: string): Promise<Evi
 }
 
 /**
+ * Query evidence by SHA-256 hash (scan with filter for APPROVED status)
+ */
+export async function getEvidenceByHashFromDynamo(hashHex: string): Promise<EvidenceEvent | null> {
+  try {
+    const cleanHash = hashHex.trim().toLowerCase();
+    const res = await dynamoDocClient.send(
+      new ScanCommand({
+        TableName: REAL_AWS_RESOURCES.tables.evidence,
+        FilterExpression: 'sha256 = :h AND (#s = :approved OR #s = :committed)',
+        ExpressionAttributeNames: { '#s': 'status' },
+        ExpressionAttributeValues: {
+          ':h': cleanHash,
+          ':approved': 'APPROVED',
+          ':committed': 'COMMITTED',
+        },
+      })
+    );
+    if (res.Items && res.Items.length > 0) {
+      return res.Items[0] as EvidenceEvent;
+    }
+    return null;
+  } catch (err) {
+    console.warn(`DynamoDB scan failed for hash ${hashHex}:`, err);
+    return null;
+  }
+}
+
+/**
+ * Query all evidence events for a parcel (scan with filter, sorted by createdAt desc)
+ */
+export async function getEventsForParcelFromDynamo(parcelId: string): Promise<EvidenceEvent[]> {
+  try {
+    const res = await dynamoDocClient.send(
+      new ScanCommand({
+        TableName: REAL_AWS_RESOURCES.tables.evidence,
+        FilterExpression: 'parcelId = :pid',
+        ExpressionAttributeValues: { ':pid': parcelId },
+      })
+    );
+    const items = (res.Items as EvidenceEvent[]) || [];
+    return items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  } catch (err) {
+    console.warn(`DynamoDB scan failed for parcel events ${parcelId}:`, err);
+    return [];
+  }
+}
+
+/**
+ * Get all pending evidence events from real DynamoDB
+ */
+export async function getPendingEventsFromDynamo(): Promise<EvidenceEvent[]> {
+  try {
+    const res = await dynamoDocClient.send(
+      new ScanCommand({
+        TableName: REAL_AWS_RESOURCES.tables.evidence,
+        FilterExpression: '#s = :pending',
+        ExpressionAttributeNames: { '#s': 'status' },
+        ExpressionAttributeValues: { ':pending': 'PENDING' },
+      })
+    );
+    const items = (res.Items as EvidenceEvent[]) || [];
+    return items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  } catch (err) {
+    console.warn('DynamoDB scan failed for pending events:', err);
+    return [];
+  }
+}
+
+// ─────────────────────────────────────
+// DynamoDB Audit Operations
+// ─────────────────────────────────────
+
+/**
  * Log structured audit event to real Amazon DynamoDB
  */
 export async function saveAuditToDynamo(audit: AuditEvent): Promise<void> {
@@ -162,6 +304,56 @@ export async function saveAuditToDynamo(audit: AuditEvent): Promise<void> {
     })
   );
 }
+
+/**
+ * Retrieve audit logs from real Amazon DynamoDB (scan with optional filters)
+ */
+export async function getAuditLogsFromDynamo(filters?: {
+  parcelId?: string;
+  actorId?: string;
+  action?: string;
+}): Promise<AuditEvent[]> {
+  try {
+    const filterExpressions: string[] = [];
+    const expressionValues: Record<string, string> = {};
+
+    if (filters?.parcelId) {
+      filterExpressions.push('resourceId = :pid');
+      expressionValues[':pid'] = filters.parcelId;
+    }
+    if (filters?.actorId) {
+      filterExpressions.push('actorId = :aid');
+      expressionValues[':aid'] = filters.actorId;
+    }
+    if (filters?.action) {
+      filterExpressions.push('#act = :act');
+      expressionValues[':act'] = filters.action;
+    }
+
+    const scanParams: Record<string, unknown> = {
+      TableName: REAL_AWS_RESOURCES.tables.audit,
+    };
+
+    if (filterExpressions.length > 0) {
+      scanParams.FilterExpression = filterExpressions.join(' AND ');
+      scanParams.ExpressionAttributeValues = expressionValues;
+      if (filters?.action) {
+        scanParams.ExpressionAttributeNames = { '#act': 'action' };
+      }
+    }
+
+    const res = await dynamoDocClient.send(new ScanCommand(scanParams as any));
+    const items = (res.Items as AuditEvent[]) || [];
+    return items.sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
+  } catch (err) {
+    console.warn('DynamoDB scan failed for audit logs:', err);
+    return [];
+  }
+}
+
+// ─────────────────────────────────────
+// Real AWS Storage Stats (monitoring)
+// ─────────────────────────────────────
 
 /**
  * Retrieve real live storage metrics from AWS S3 and DynamoDB
