@@ -13,6 +13,7 @@ import {
   History,
   Landmark,
 } from "lucide-react";
+import { BhuSetuLogo } from "@/components/BhuSetuLogo";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -94,24 +95,8 @@ export default function RootLayout({
           <div className="bg-[#FEFEFA]/90 backdrop-blur-md border border-[#DED8CF]/80 shadow-[0_4px_20px_-2px_rgba(93,112,82,0.12)] rounded-full px-3 sm:px-6 py-2 transition-all duration-300">
             <div className="flex items-center justify-between gap-3">
               {/* Brand */}
-              <Link href="/" className="flex items-center space-x-2.5 group shrink-0">
-                <div className="w-9 h-9 rounded-full bg-[#5D7052] flex items-center justify-center shadow-sm group-hover:bg-[#4E5E44] transition-all duration-300 group-hover:scale-105 active:scale-95">
-                  <ShieldCheck className="w-5 h-5 text-[#F3F4F1]" />
-                </div>
-                <div>
-                  <div className="font-serif font-bold text-base text-[#2C2C24] tracking-tight flex items-center gap-1.5 leading-tight">
-                    <span>BhuSetu</span>
-                    <span className="text-[#78786C] text-xs font-sans font-normal hidden sm:inline">
-                      | भू-सेतु
-                    </span>
-                    <span className="bg-[#5D7052]/10 text-[#5D7052] text-[9.5px] px-2 py-0.5 rounded-full font-mono border border-[#5D7052]/30 hidden md:inline font-semibold">
-                      ST-UT/REV PILOT
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-[#78786C] font-sans hidden sm:block leading-tight">
-                    Revenue &amp; Registration Evidence · Bengaluru District
-                  </div>
-                </div>
+              <Link href="/" className="flex items-center group shrink-0">
+                <BhuSetuLogo variant="header" size="md" showSubtitle={true} />
               </Link>
 
               {/* Desktop Navigation */}
@@ -187,10 +172,9 @@ export default function RootLayout({
             {/* Top row: brand + nav links */}
             <div className="flex flex-col sm:flex-row justify-between items-start gap-6 pb-6 border-b border-[#363E34]">
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-[#F3F4F1] font-serif font-bold text-sm">
-                  <ShieldCheck className="w-4 h-4 text-[#C18C5D]" />
-                  <span>BhuSetu | भू-सेतु</span>
-                </div>
+                <Link href="/" className="inline-block group">
+                  <BhuSetuLogo variant="footer" size="sm" showSubtitle={false} />
+                </Link>
                 <p className="text-[11px] text-[#A8A399] max-w-xs leading-relaxed">
                   Permissioned Hyperledger Fabric Ledger Pilot · State/UT Land Administration · Bengaluru District
                 </p>
