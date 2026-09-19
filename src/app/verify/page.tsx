@@ -28,6 +28,7 @@ import {
   Globe,
   PhoneCall,
   WifiOff,
+  ShieldCheck,
 } from "lucide-react";
 import { PublicVerificationResponse, VerificationStatus } from "@/lib/types/domain";
 
@@ -296,20 +297,20 @@ function VerifyContent() {
   };
 
   return (
-    <div className={`max-w-4xl mx-auto px-4 py-8 space-y-8 ${lowBandwidth ? "grayscale-[0.15]" : ""}`}>
+    <div className={`max-w-4xl mx-auto px-4 py-10 space-y-8 ${lowBandwidth ? "grayscale-[0.15]" : ""}`}>
       {/* Top Utility Bar: Language Selector & Low-Bandwidth Mode */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-parchment-border pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-[#DED8CF]/70 pb-4">
         <div className="flex items-center gap-2">
-          <Globe className="w-3.5 h-3.5 text-carbon-muted" />
-          <span className="font-semibold text-carbon-muted">Language:</span>
+          <Globe className="w-3.5 h-3.5 text-[#78786C]" />
+          <span className="font-semibold text-[#78786C]">Language:</span>
           {(["en", "te", "hi"] as Language[]).map((l) => (
             <button
               key={l}
               onClick={() => setLang(l)}
-              className={`px-2 py-0.5 rounded transition-colors ${
+              className={`px-3 py-1 rounded-full text-xs transition-all duration-200 ${
                 lang === l
-                  ? "bg-carbon-primary text-white font-bold"
-                  : "text-carbon-muted hover:text-carbon-primary"
+                  ? "bg-[#5D7052] text-[#F3F4F1] font-bold shadow-sm"
+                  : "text-[#78786C] hover:text-[#2C2C24] hover:bg-[#5D7052]/10 font-medium"
               }`}
             >
               {l === "en" ? "English" : l === "te" ? "తెలుగు" : "हिन्दी"}
@@ -317,87 +318,90 @@ function VerifyContent() {
           ))}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setLowBandwidth(!lowBandwidth)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors text-xs ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-xs font-semibold ${
               lowBandwidth
-                ? "bg-amber-100 text-amber-900 border-amber-300 font-bold"
-                : "bg-parchment-muted text-carbon-muted border-parchment-border hover:bg-parchment-border"
+                ? "bg-[#C18C5D]/15 text-[#AF7B4E] border-[#C18C5D]/40 font-bold"
+                : "bg-[#F0EBE5] text-[#78786C] border-[#DED8CF] hover:bg-[#E6DCCD]"
             }`}
           >
-            <WifiOff className="w-3 h-3" />
+            <WifiOff className="w-3 h-3 text-[#78786C]" />
             <span>{t.lowBandwidth}</span>
           </button>
           <button
             onClick={() => setShowHowItWorks(true)}
-            className="text-emerald-700 hover:text-emerald-900 font-semibold flex items-center gap-1"
+            className="px-3 py-1.5 rounded-full bg-[#5D7052]/10 text-[#5D7052] hover:bg-[#5D7052]/20 font-semibold text-xs flex items-center gap-1.5 transition-colors border border-[#5D7052]/20"
           >
             <HelpCircle className="w-3.5 h-3.5" />
-            <span>Help</span>
+            <span>Help Guide</span>
           </button>
         </div>
       </div>
 
       {/* Eyebrow & Header Title */}
-      <div className="space-y-2 border-b border-parchment-border pb-5">
-        <div className="text-xs font-semibold text-terracotta uppercase tracking-wider">
+      <div className="space-y-2.5 border-b border-[#DED8CF]/70 pb-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#5D7052]/10 border border-[#5D7052]/25 text-[#5D7052] text-[11px] font-semibold uppercase tracking-wider">
+          <ShieldCheck className="w-3.5 h-3.5" />
           DIGITAL LAND RECORD VERIFICATION · DISTRICT PILOT
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-carbon-primary flex items-center gap-2.5">
-          <FileCheck2 className="w-8 h-8 text-terracotta" />
+        <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#2C2C24] flex items-center gap-3">
+          <FileCheck2 className="w-8 h-8 text-[#C18C5D]" />
           {t.title}
         </h1>
-        <p className="text-carbon-muted text-xs sm:text-sm">{t.subtitle}</p>
+        <p className="text-[#78786C] text-xs sm:text-sm leading-relaxed max-w-2xl">{t.subtitle}</p>
       </div>
 
       {/* Input Tabs Area */}
-      <div className="parchment-card rounded-2xl border border-parchment-border overflow-hidden">
-        {/* Three Entry Pathway Tabs */}
-        <div className="flex border-b border-parchment-border bg-parchment-muted">
-          <button
-            onClick={() => { setActiveTab("ref"); stopCamera(); }}
-            className={`flex-1 py-4 px-4 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
-              activeTab === "ref"
-                ? "border-terracotta text-terracotta bg-white"
-                : "border-transparent text-carbon-muted hover:text-carbon-primary"
-            }`}
-          >
-            <Search className="w-4 h-4" />
-            <span>{t.tabRef}</span>
-          </button>
+      <div className="organic-card rounded-3xl border border-[#DED8CF] shadow-soft overflow-hidden">
+        {/* Three Entry Pathway Pill Switcher */}
+        <div className="p-3 bg-[#F0EBE5]/70 border-b border-[#DED8CF]/70">
+          <div className="flex gap-1.5 p-1 bg-[#E6DCCD]/40 rounded-full">
+            <button
+              onClick={() => { setActiveTab("ref"); stopCamera(); }}
+              className={`flex-1 py-2.5 px-4 text-xs font-semibold rounded-full flex items-center justify-center gap-2 transition-all duration-200 ${
+                activeTab === "ref"
+                  ? "bg-[#FEFEFA] text-[#2C2C24] shadow-sm font-bold"
+                  : "text-[#78786C] hover:text-[#2C2C24]"
+              }`}
+            >
+              <Search className="w-4 h-4 text-[#C18C5D]" />
+              <span>{t.tabRef}</span>
+            </button>
 
-          <button
-            onClick={() => { setActiveTab("upload"); stopCamera(); }}
-            className={`flex-1 py-4 px-4 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
-              activeTab === "upload"
-                ? "border-terracotta text-terracotta bg-white"
-                : "border-transparent text-carbon-muted hover:text-carbon-primary"
-            }`}
-          >
-            <Upload className="w-4 h-4" />
-            <span>{t.tabUpload}</span>
-          </button>
+            <button
+              onClick={() => { setActiveTab("upload"); stopCamera(); }}
+              className={`flex-1 py-2.5 px-4 text-xs font-semibold rounded-full flex items-center justify-center gap-2 transition-all duration-200 ${
+                activeTab === "upload"
+                  ? "bg-[#FEFEFA] text-[#2C2C24] shadow-sm font-bold"
+                  : "text-[#78786C] hover:text-[#2C2C24]"
+              }`}
+            >
+              <Upload className="w-4 h-4 text-[#5D7052]" />
+              <span>{t.tabUpload}</span>
+            </button>
 
-          <button
-            onClick={() => { setActiveTab("qr"); stopCamera(); }}
-            className={`flex-1 py-4 px-4 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
-              activeTab === "qr"
-                ? "border-terracotta text-terracotta bg-white"
-                : "border-transparent text-carbon-muted hover:text-carbon-primary"
-            }`}
-          >
-            <QrCode className="w-4 h-4" />
-            <span>{t.tabQr}</span>
-          </button>
+            <button
+              onClick={() => { setActiveTab("qr"); stopCamera(); }}
+              className={`flex-1 py-2.5 px-4 text-xs font-semibold rounded-full flex items-center justify-center gap-2 transition-all duration-200 ${
+                activeTab === "qr"
+                  ? "bg-[#FEFEFA] text-[#2C2C24] shadow-sm font-bold"
+                  : "text-[#78786C] hover:text-[#2C2C24]"
+              }`}
+            >
+              <QrCode className="w-4 h-4 text-[#5D7052]" />
+              <span>{t.tabQr}</span>
+            </button>
+          </div>
         </div>
 
         {/* Tab Contents */}
         <div className="p-6 sm:p-8 space-y-6">
           {/* TAB 1: ENTER REFERENCE */}
           {activeTab === "ref" && (
-            <div className="space-y-4">
-              <label className="block text-xs font-bold text-carbon-primary">
+            <div className="space-y-5">
+              <label className="block text-xs font-bold text-[#2C2C24] uppercase tracking-wider">
                 {t.refLabel}
               </label>
 
@@ -408,13 +412,13 @@ function VerifyContent() {
                   value={referenceInput}
                   onChange={(e) => setReferenceInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleVerifyReference()}
-                  className="flex-1 px-4 py-3 border border-parchment-border rounded-xl focus:ring-2 focus:ring-terracotta focus:border-terracotta font-mono text-carbon-primary placeholder-carbon-muted text-sm"
+                  className="flex-1 px-4 py-3.5 border border-[#DED8CF] rounded-2xl bg-[#FEFEFA] focus:ring-2 focus:ring-[#5D7052]/30 focus:border-[#5D7052] font-mono text-[#2C2C24] placeholder-[#78786C] text-sm"
                 />
 
                 <button
                   onClick={() => handleVerifyReference()}
                   disabled={!referenceInput.trim() || loading}
-                  className="px-6 py-3 bg-terracotta hover:bg-terracotta-hover disabled:opacity-50 text-white font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-2 shrink-0 shadow-sm"
+                  className="px-7 py-3.5 bg-[#C18C5D] hover:bg-[#AF7B4E] active:scale-95 disabled:opacity-50 text-white font-semibold text-xs rounded-full transition-all duration-200 flex items-center justify-center gap-2 shrink-0 shadow-[0_4px_16px_-2px_rgba(193,140,93,0.35)]"
                 >
                   {loading ? (
                     <span>{t.btnVerifying}</span>
@@ -428,24 +432,24 @@ function VerifyContent() {
               </div>
 
               {/* Quick Test Fixtures */}
-              <div className="space-y-2 pt-2 border-t border-parchment-border">
-                <span className="text-[11px] text-carbon-muted block">Quick Test Scenarios:</span>
+              <div className="space-y-2 pt-3 border-t border-[#DED8CF]/70">
+                <span className="text-[11px] text-[#78786C] font-semibold block">Quick Test Scenarios:</span>
                 <div className="flex flex-wrap gap-2 text-xs font-mono">
                   <button
                     onClick={() => { setReferenceInput("BHS-2M7D-9KQX"); handleVerifyReference("BHS-2M7D-9KQX"); }}
-                    className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded hover:bg-emerald-100"
+                    className="px-3 py-1.5 bg-[#5D7052]/10 text-[#5D7052] border border-[#5D7052]/30 rounded-full font-semibold hover:bg-[#5D7052]/20 transition-colors"
                   >
                     ✓ Verified (BHS-2M7D-9KQX)
                   </button>
                   <button
                     onClick={() => { setReferenceInput("BHS-88X9-4K2M"); handleVerifyReference("BHS-88X9-4K2M"); }}
-                    className="px-2.5 py-1 bg-rose-50 text-rose-800 border border-rose-200 rounded hover:bg-rose-100"
+                    className="px-3 py-1.5 bg-[#A85448]/10 text-[#A85448] border border-[#A85448]/30 rounded-full font-semibold hover:bg-[#A85448]/20 transition-colors"
                   >
                     ⚠ Disputed Hold (BHS-88X9-4K2M)
                   </button>
                   <button
                     onClick={() => { setReferenceInput("BHS-4K9P-1L0W"); handleVerifyReference("BHS-4K9P-1L0W"); }}
-                    className="px-2.5 py-1 bg-purple-50 text-purple-800 border border-purple-200 rounded hover:bg-purple-100"
+                    className="px-3 py-1.5 bg-[#6B21A8]/10 text-[#6B21A8] border border-[#6B21A8]/30 rounded-full font-semibold hover:bg-[#6B21A8]/20 transition-colors"
                   >
                     ↻ Superseded (BHS-4K9P-1L0W)
                   </button>
@@ -456,15 +460,17 @@ function VerifyContent() {
 
           {/* TAB 2: UPLOAD DOCUMENT */}
           {activeTab === "upload" && (
-            <div className="space-y-4">
-              <label className="block text-xs font-bold text-carbon-primary">
+            <div className="space-y-5">
+              <label className="block text-xs font-bold text-[#2C2C24] uppercase tracking-wider">
                 Upload Official Evidence File (PDF / Extract Text)
               </label>
 
-              <div className="border-2 border-dashed border-parchment-border rounded-2xl p-6 text-center hover:border-terracotta transition-colors bg-parchment-muted space-y-3">
-                <Upload className="w-8 h-8 text-carbon-muted mx-auto" />
-                <div className="text-xs text-carbon-muted">
-                  <label className="font-semibold text-terracotta hover:text-terracotta-hover cursor-pointer">
+              <div className="border-2 border-dashed border-[#DED8CF] rounded-3xl p-8 text-center hover:border-[#5D7052] transition-all bg-[#FEFEFA]/70 space-y-3.5 group">
+                <div className="w-14 h-14 rounded-2xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center mx-auto group-hover:bg-[#5D7052] group-hover:text-white transition-colors duration-300">
+                  <Upload className="w-7 h-7" />
+                </div>
+                <div className="text-xs text-[#78786C]">
+                  <label className="font-semibold text-[#C18C5D] hover:text-[#AF7B4E] cursor-pointer">
                     Click to select file
                     <input
                       type="file"
@@ -476,7 +482,7 @@ function VerifyContent() {
                   <span> or paste extract content below</span>
                 </div>
                 {fileInput && (
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-800 rounded-md text-xs font-mono">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#5D7052]/10 text-[#5D7052] rounded-full text-xs font-mono font-semibold border border-[#5D7052]/20">
                     <FileText className="w-3.5 h-3.5" />
                     <span>{fileInput.name}</span>
                     <span>({Math.round(fileInput.size / 1024)} KB)</span>
@@ -489,22 +495,22 @@ function VerifyContent() {
                 placeholder="Or paste official extract text content here..."
                 value={fileText}
                 onChange={(e) => setFileText(e.target.value)}
-                className="w-full p-3 border border-parchment-border rounded-xl text-xs font-mono text-carbon-primary focus:ring-2 focus:ring-terracotta focus:border-terracotta bg-white"
+                className="w-full p-4 border border-[#DED8CF] rounded-2xl text-xs font-mono text-[#2C2C24] placeholder-[#78786C] focus:ring-2 focus:ring-[#5D7052]/30 focus:border-[#5D7052] bg-[#FEFEFA]"
               />
 
               <button
                 onClick={handleVerifyDocument}
                 disabled={(!fileInput && !fileText) || loading}
-                className="w-full py-3 bg-terracotta hover:bg-terracotta-hover disabled:opacity-50 text-white font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm"
+                className="w-full py-3.5 bg-[#C18C5D] hover:bg-[#AF7B4E] disabled:opacity-50 text-white font-semibold text-xs rounded-full transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_4px_16px_-2px_rgba(193,140,93,0.35)] active:scale-95"
               >
                 {loading ? <span>Calculating SHA-256 Fingerprint...</span> : <span>Verify Document Fingerprint</span>}
               </button>
 
               {/* Privacy Notice */}
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2 text-xs text-amber-900">
-                <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <span>
-                  <strong>Privacy &amp; Security Note:</strong> Uploaded files are processed in-memory solely for SHA-256 fingerprint matching. Do NOT upload Aadhaar cards, personal ID photos, or unrelated private files.
+              <div className="bg-[#F0EBE5]/80 border border-[#DED8CF] rounded-2xl p-4 flex items-start gap-3 text-xs text-[#78786C]">
+                <Lock className="w-4 h-4 text-[#5D7052] shrink-0 mt-0.5" />
+                <span className="leading-relaxed">
+                  <strong className="text-[#2C2C24]">Privacy &amp; Security Note:</strong> Uploaded files are processed in-memory solely for SHA-256 fingerprint matching. Do NOT upload Aadhaar cards, personal ID photos, or unrelated private files.
                 </span>
               </div>
             </div>
@@ -512,25 +518,25 @@ function VerifyContent() {
 
           {/* TAB 3: SCAN QR — Camera + Manual Fallback */}
           {activeTab === "qr" && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="text-center max-w-md mx-auto space-y-2">
-                <div className="w-12 h-12 bg-parchment-muted text-terracotta rounded-full flex items-center justify-center mx-auto border border-parchment-border">
-                  <QrCode className="w-6 h-6" />
+                <div className="w-14 h-14 bg-[#5D7052]/10 text-[#5D7052] rounded-2xl flex items-center justify-center mx-auto border border-[#5D7052]/20">
+                  <QrCode className="w-7 h-7" />
                 </div>
-                <h3 className="font-bold text-sm text-carbon-primary">Live Camera QR Code Scanner</h3>
-                <p className="text-xs text-carbon-muted leading-relaxed">
+                <h3 className="font-serif font-bold text-base text-[#2C2C24]">Live Camera QR Code Scanner</h3>
+                <p className="text-xs text-[#78786C] leading-relaxed">
                   Hold your camera over the QR code printed on an official Revenue / Sub-Registrar extract to verify reference authenticity.
                 </p>
               </div>
 
               {/* Video Scanner */}
-              <div className="max-w-sm mx-auto bg-carbon-primary rounded-2xl overflow-hidden border border-slate-800 relative aspect-video flex items-center justify-center text-white">
+              <div className="max-w-sm mx-auto bg-[#1F241E] rounded-3xl overflow-hidden border border-[#363E34] relative aspect-video flex items-center justify-center text-white shadow-soft">
                 {cameraActive ? (
                   <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted />
                 ) : (
                   <div className="text-center p-4 space-y-2">
-                    <Camera className="w-8 h-8 text-slate-500 mx-auto" />
-                    <p className="text-xs text-slate-400">Camera preview is off.</p>
+                    <Camera className="w-8 h-8 text-[#78786C] mx-auto" />
+                    <p className="text-xs text-[#A8A399]">Camera preview is off.</p>
                   </div>
                 )}
               </div>
@@ -539,7 +545,7 @@ function VerifyContent() {
                 {!cameraActive ? (
                   <button
                     onClick={startCamera}
-                    className="px-4 py-2 bg-terracotta hover:bg-terracotta-hover text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
+                    className="px-5 py-2.5 bg-[#C18C5D] hover:bg-[#AF7B4E] active:scale-95 text-white text-xs font-bold rounded-full flex items-center gap-2 transition-all shadow-[0_4px_16px_-2px_rgba(193,140,93,0.3)]"
                   >
                     <Camera className="w-4 h-4" />
                     <span>Start Camera Scanner</span>
@@ -547,7 +553,7 @@ function VerifyContent() {
                 ) : (
                   <button
                     onClick={stopCamera}
-                    className="px-4 py-2 bg-carbon-secondary hover:bg-carbon-primary text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
+                    className="px-5 py-2.5 bg-[#2C2C24] hover:bg-[#1F241E] active:scale-95 text-white text-xs font-bold rounded-full flex items-center gap-2 transition-all"
                   >
                     <CameraOff className="w-4 h-4" />
                     <span>Stop Camera</span>
@@ -556,14 +562,14 @@ function VerifyContent() {
               </div>
 
               {cameraError && (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 text-center">
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 text-center">
                   {cameraError}
                 </div>
               )}
 
               {/* Manual fallback */}
-              <div className="pt-2 border-t border-parchment-border max-w-md mx-auto space-y-2">
-                <label className="block text-xs font-bold text-carbon-primary">
+              <div className="pt-4 border-t border-[#DED8CF]/70 max-w-md mx-auto space-y-2">
+                <label className="block text-xs font-bold text-[#2C2C24]">
                   Or enter scanned QR text / reference manually:
                 </label>
                 <div className="flex gap-2">
@@ -579,12 +585,12 @@ function VerifyContent() {
                         if (extracted) handleVerifyReference(extracted);
                       }
                     }}
-                    className="flex-1 px-3 py-2 border border-parchment-border rounded-xl text-xs font-mono"
+                    className="flex-1 px-4 py-2.5 border border-[#DED8CF] rounded-xl text-xs font-mono bg-[#FEFEFA] focus:ring-2 focus:ring-[#5D7052]/30"
                   />
                   <button
                     onClick={() => handleVerifyReference()}
                     disabled={!referenceInput.trim() || loading}
-                    className="px-4 py-2 bg-carbon-primary hover:bg-carbon-secondary disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-colors"
+                    className="px-5 py-2.5 bg-[#2C2C24] hover:bg-[#1F241E] disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all"
                   >
                     Process
                   </button>
@@ -594,8 +600,8 @@ function VerifyContent() {
           )}
 
           {/* Privacy Note (always visible below input) */}
-          <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-3 flex items-start gap-2 text-xs text-amber-900">
-            <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+          <div className="bg-[#F0EBE5]/70 border border-[#DED8CF] rounded-2xl p-3.5 flex items-start gap-2.5 text-xs text-[#78786C]">
+            <Lock className="w-4 h-4 text-[#5D7052] shrink-0 mt-0.5" />
             <span>{t.privacyNote}</span>
           </div>
         </div>
@@ -604,78 +610,86 @@ function VerifyContent() {
       {/* Verification Result Display Card */}
       {result && (
         <div ref={resultRef} role="status" aria-live="polite" className="space-y-6">
-          <div className={`rounded-2xl border p-6 sm:p-8 space-y-6 shadow-sm ${getStatusBadge(result.status).bgColor}`}>
+          <div className={`organic-card rounded-3xl p-6 sm:p-8 space-y-6 shadow-lift border-l-4 ${
+            result.status === "VERIFIED"
+              ? "border-l-[#5D7052]"
+              : result.status === "DISPUTED"
+              ? "border-l-[#C18C5D]"
+              : "border-l-[#A85448]"
+          }`}>
             {/* Status Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-carbon-muted/20">
-              <div className="flex items-center gap-3">
-                {getStatusBadge(result.status).icon}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#DED8CF]/70">
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-full bg-[#5D7052]/10 flex items-center justify-center text-[#5D7052] shrink-0">
+                  {getStatusBadge(result.status).icon}
+                </div>
                 <div>
-                  <span className={`inline-block px-2.5 py-0.5 text-xs font-extrabold tracking-wider rounded-md ${getStatusBadge(result.status).badgeBg}`}>
+                  <span className={`inline-block px-3 py-0.5 text-xs font-extrabold tracking-wider rounded-full ${getStatusBadge(result.status).badgeBg}`}>
                     {result.status}
                   </span>
-                  <h2 className="text-lg sm:text-xl font-extrabold mt-1">
+                  <h2 className="font-serif text-lg sm:text-xl font-bold mt-1 text-[#2C2C24]">
                     {getStatusBadge(result.status).title}
                   </h2>
                 </div>
               </div>
 
               {result.verificationReference && result.verificationReference !== "N/A" && (
-                <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-xl border border-parchment-border text-xs font-mono text-carbon-primary">
+                <div className="flex items-center gap-2 bg-[#F0EBE5] px-3.5 py-1.5 rounded-full border border-[#DED8CF] text-xs font-mono text-[#2C2C24]">
                   <span>Ref: <strong>{result.verificationReference}</strong></span>
                   <button
                     onClick={() => copyToClipboard(result.verificationReference)}
-                    className="p-1 hover:bg-parchment-muted rounded text-carbon-muted hover:text-carbon-primary"
+                    className="p-1 hover:bg-[#E6DCCD] rounded-full text-[#78786C] hover:text-[#2C2C24] transition-colors"
                     title="Copy reference"
                   >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? <Check className="w-3.5 h-3.5 text-[#5D7052]" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               )}
             </div>
 
             {/* Explanation Message */}
-            <p className="text-sm font-semibold leading-relaxed">
+            <p className="text-sm font-semibold leading-relaxed text-[#2C2C24]">
               {result.statusMessage}
             </p>
 
             {/* Metadata Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-white/90 p-4 rounded-xl border border-parchment-border font-mono">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-[#FDFCF8] p-5 rounded-2xl border border-[#DED8CF]/80 font-mono">
               <div>
-                <span className="text-carbon-muted block">Issuing Authority</span>
-                <span className="font-semibold text-carbon-primary">{result.issuingAuthority}</span>
+                <span className="text-[#78786C] block">Issuing Authority</span>
+                <span className="font-semibold text-[#2C2C24]">{result.issuingAuthority}</span>
               </div>
 
               <div>
-                <span className="text-carbon-muted block">Issue Timestamp (NPL Synced)</span>
-                <span className="font-semibold text-carbon-primary">{new Date(result.issuedAt).toLocaleString("en-IN")}</span>
+                <span className="text-[#78786C] block">Issue Timestamp (NPL Synced)</span>
+                <span className="font-semibold text-[#2C2C24]">{new Date(result.issuedAt).toLocaleString("en-IN")}</span>
               </div>
 
               <div>
-                <span className="text-carbon-muted block">Masked Parcel Reference</span>
-                <span className="font-bold text-carbon-primary">{result.parcelReferenceMasked}</span>
+                <span className="text-[#78786C] block">Masked Parcel Reference</span>
+                <span className="font-bold text-[#2C2C24]">{result.parcelReferenceMasked}</span>
               </div>
 
               <div>
-                <span className="text-carbon-muted block">Evidence Category</span>
-                <span className="font-semibold text-carbon-primary">{result.evidenceType || "Official Extract"}</span>
+                <span className="text-[#78786C] block">Evidence Category</span>
+                <span className="font-semibold text-[#2C2C24]">{result.evidenceType || "Official Extract"}</span>
               </div>
             </div>
 
             {/* Next Safe Action */}
-            <div className="bg-white/95 p-4 rounded-xl border border-parchment-border space-y-1 text-xs">
-              <span className="font-bold text-carbon-primary uppercase tracking-wider block text-[10px]">
+            <div className="bg-[#FEFEFA] p-5 rounded-2xl border border-[#DED8CF]/80 space-y-1.5 text-xs shadow-sm">
+              <span className="font-bold text-[#2C2C24] uppercase tracking-wider block text-[10px]">
                 Recommended Safe Next Action
               </span>
-              <p className="text-carbon-secondary leading-relaxed">{result.nextStep}</p>
+              <p className="text-[#4A4A40] leading-relaxed">{result.nextStep}</p>
             </div>
 
             {/* Scannable QR Element for Verified Results */}
             {qrDataUrl && !lowBandwidth && (
-              <div className="bg-white p-4 rounded-xl border border-parchment-border flex flex-col sm:flex-row items-center gap-4">
-                <img src={qrDataUrl} alt="Verification QR Code" className="w-28 h-28 border rounded-lg p-1 bg-white" />
-                <div className="space-y-1 text-center sm:text-left text-xs">
-                  <h4 className="font-bold text-carbon-primary">Official Scannable Verification QR Code</h4>
-                  <p className="text-carbon-muted leading-relaxed">
+              <div className="bg-[#FEFEFA] p-5 rounded-2xl border border-[#DED8CF]/80 flex flex-col sm:flex-row items-center gap-5 shadow-sm">
+                <img src={qrDataUrl} alt="Verification QR Code" className="w-28 h-28 border border-[#DED8CF] rounded-2xl p-1.5 bg-white shadow-sm shrink-0" />
+                <div className="space-y-1.5 text-center sm:text-left text-xs">
+                  <h4 className="font-serif font-bold text-sm text-[#2C2C24]">Official Scannable Verification QR Code</h4>
+                  <p className="text-[#78786C] leading-relaxed">
                     This QR code directly verifies this authentic evidence event without exposing owner names, survey boundary coordinates, or personal identification.
                   </p>
                 </div>
@@ -683,24 +697,24 @@ function VerifyContent() {
             )}
 
             {/* Mandatory Product Legal Title Disclaimer */}
-            <div className="bg-carbon-primary text-slate-300 p-4 rounded-xl text-xs space-y-1.5 border border-slate-800">
-              <div className="flex items-center gap-1.5 font-bold text-amber-400 uppercase tracking-wider text-[10px]">
+            <div className="bg-[#242823] text-[#DED8CF] p-5 rounded-2xl text-xs space-y-2 border border-[#363E34]">
+              <div className="flex items-center gap-1.5 font-bold text-[#C18C5D] uppercase tracking-wider text-[10px]">
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span>{t.disclaimerTitle}</span>
               </div>
-              <p className="leading-relaxed text-[11px]">
+              <p className="leading-relaxed text-[#C2BDB2] text-[11px]">
                 {result.legalDisclaimer}
               </p>
               <div className="flex flex-wrap gap-4 pt-2 text-[11px]">
                 <button
                   onClick={() => setShowHowItWorks(true)}
-                  className="text-emerald-400 hover:text-emerald-300 font-semibold underline flex items-center gap-1"
+                  className="text-[#8FB97C] hover:text-[#A7D195] font-semibold underline flex items-center gap-1 transition-colors"
                 >
                   <span>{t.howItWorks}</span>
                 </button>
                 <button
                   onClick={() => setShowContactModal(true)}
-                  className="text-blue-400 hover:text-blue-300 font-semibold underline flex items-center gap-1"
+                  className="text-[#E0A97D] hover:text-[#F3C49C] font-semibold underline flex items-center gap-1 transition-colors"
                 >
                   <span>{t.contactAuth}</span>
                 </button>
@@ -709,36 +723,36 @@ function VerifyContent() {
           </div>
 
           {/* Expandable "What Was Checked" — Evidence Chain */}
-          <div className="parchment-card rounded-2xl border border-parchment-border p-6 space-y-4">
+          <div className="organic-card rounded-3xl border border-[#DED8CF] p-6 sm:p-7 space-y-4 shadow-soft">
             <button
               onClick={() => setShowEvidenceChain(!showEvidenceChain)}
-              className="w-full flex items-center justify-between text-sm font-bold text-carbon-primary hover:text-terracotta transition-colors"
+              className="w-full flex items-center justify-between text-sm font-serif font-bold text-[#2C2C24] hover:text-[#5D7052] transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <HelpCircle className="w-4 h-4 text-emerald-600" />
+              <div className="flex items-center gap-2.5">
+                <HelpCircle className="w-4 h-4 text-[#5D7052]" />
                 <span>{t.whatWasChecked}</span>
               </div>
               {showEvidenceChain ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
 
             {showEvidenceChain && (
-              <div className="space-y-3 text-xs pt-2 border-t border-parchment-border">
-                {/* Bullet list summary from teammate */}
-                <ul className="text-xs text-carbon-muted space-y-2 list-disc pl-5">
+              <div className="space-y-4 text-xs pt-3 border-t border-[#DED8CF]/70">
+                {/* Bullet list summary */}
+                <ul className="text-xs text-[#78786C] space-y-2 list-disc pl-5 leading-relaxed">
                   <li>
-                    <strong className="text-carbon-primary">Reference / Document Fingerprint:</strong> Canonical SHA-256 integrity hash verification against private off-chain Amazon S3 evidence storage.
+                    <strong className="text-[#2C2C24]">Reference / Document Fingerprint:</strong> Canonical SHA-256 integrity hash verification against private off-chain Amazon S3 evidence storage.
                   </li>
                   <li>
-                    <strong className="text-carbon-primary">Authorized Source &amp; Event Timestamp:</strong> Traceable provenance to official AP Revenue, Registration, or Survey departments recorded in permissioned ledger.
+                    <strong className="text-[#2C2C24]">Authorized Source &amp; Event Timestamp:</strong> Traceable provenance to official AP Revenue, Registration, or Survey departments recorded in permissioned ledger.
                   </li>
                   <li>
-                    <strong className="text-carbon-primary">Current Dispute / Supersession Status:</strong> Active judicial injunction orders or newer mutation supersession events verified (a dispute or newer deed immediately overrides positive verification).
+                    <strong className="text-[#2C2C24]">Current Dispute / Supersession Status:</strong> Active judicial injunction orders or newer mutation supersession events verified (a dispute or newer deed immediately overrides positive verification).
                   </li>
                 </ul>
 
-                {/* Detailed 6-item evidence chain from HEAD */}
-                <div className="space-y-2 pt-2 border-t border-parchment-border">
-                  <span className="text-[11px] text-carbon-muted font-semibold block">6-Point Statutory Evidence Chain:</span>
+                {/* Detailed 6-item evidence chain */}
+                <div className="space-y-2 pt-3 border-t border-[#DED8CF]/70">
+                  <span className="text-[11px] text-[#78786C] font-bold uppercase tracking-wider block">6-Point Statutory Evidence Chain:</span>
                   {[
                     { label: "1. Verification Reference", value: "Matched to issued registry book" },
                     { label: "2. Document Fingerprint (SHA-256)", value: "Exact Binary Parity" },
@@ -757,16 +771,16 @@ function VerifyContent() {
                   ].map((item) => (
                     <div
                       key={item.label}
-                      className="flex items-center justify-between bg-parchment-muted p-2.5 rounded-lg border border-parchment-border"
+                      className="flex items-center justify-between bg-[#FEFEFA] p-3 rounded-xl border border-[#DED8CF]/80 shadow-xs"
                     >
-                      <span className="font-medium text-carbon-primary">{item.label}</span>
+                      <span className="font-medium text-[#2C2C24]">{item.label}</span>
                       <span
-                        className={`font-mono font-bold ${
+                        className={`font-mono font-bold text-xs ${
                           (item as any).danger
-                            ? "text-rose-700"
+                            ? "text-[#A85448]"
                             : (item as any).purple
-                            ? "text-purple-700"
-                            : "text-emerald-700"
+                            ? "text-[#6B21A8]"
+                            : "text-[#5D7052]"
                         }`}
                       >
                         {item.value}
@@ -782,30 +796,30 @@ function VerifyContent() {
 
       {/* How Verification Works Modal */}
       {showHowItWorks && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-parchment-border">
-            <div className="flex justify-between items-center border-b border-parchment-border pb-3">
-              <h3 className="font-bold text-base text-carbon-primary">How BhuSetu Verification Works</h3>
+        <div className="fixed inset-0 z-50 bg-[#1F241E]/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[#FEFEFA] rounded-3xl max-w-lg w-full p-7 space-y-5 shadow-2xl border border-[#DED8CF]">
+            <div className="flex justify-between items-center border-b border-[#DED8CF]/80 pb-3">
+              <h3 className="font-serif font-bold text-lg text-[#2C2C24]">How BhuSetu Verification Works</h3>
               <button
                 onClick={() => setShowHowItWorks(false)}
-                className="text-carbon-muted hover:text-carbon-primary text-sm font-bold"
+                className="w-8 h-8 rounded-full bg-[#F0EBE5] hover:bg-[#E6DCCD] text-[#2C2C24] text-xs font-bold flex items-center justify-center transition-colors"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-3 text-xs text-carbon-muted leading-relaxed">
-              <p><strong className="text-carbon-primary">1. Cryptographic Fingerprinting:</strong> Every official land document issued by the Revenue or Registration department receives a canonical SHA-256 fingerprint. Any 1-character alteration produces a deterministic <code>MISMATCH</code>.</p>
-              <p><strong className="text-carbon-primary">2. Private Off-Chain Storage:</strong> Full deeds and personal identification are encrypted in AWS S3 and DynamoDB. Public users can verify authenticity without exposing sensitive citizen data.</p>
-              <p><strong className="text-carbon-primary">3. Multi-Org Permissioned Ledger:</strong> Changes require multi-org endorsement across Revenue, Registration, and Survey departments on the Hyperledger Fabric <code>land-records-pilot</code> channel.</p>
-              <p><strong className="text-carbon-primary">4. Legal Dispute Priority:</strong> If a court injunction or dispute hold is flagged, positive verification is blocked to protect citizens from buying encumbered property.</p>
+            <div className="space-y-3 text-xs text-[#78786C] leading-relaxed">
+              <p><strong className="text-[#2C2C24]">1. Cryptographic Fingerprinting:</strong> Every official land document issued by the Revenue or Registration department receives a canonical SHA-256 fingerprint. Any 1-character alteration produces a deterministic <code>MISMATCH</code>.</p>
+              <p><strong className="text-[#2C2C24]">2. Private Off-Chain Storage:</strong> Full deeds and personal identification are encrypted in AWS S3 and DynamoDB. Public users can verify authenticity without exposing sensitive citizen data.</p>
+              <p><strong className="text-[#2C2C24]">3. Multi-Org Permissioned Ledger:</strong> Changes require multi-org endorsement across Revenue, Registration, and Survey departments on the Hyperledger Fabric <code>land-records-pilot</code> channel.</p>
+              <p><strong className="text-[#2C2C24]">4. Legal Dispute Priority:</strong> If a court injunction or dispute hold is flagged, positive verification is blocked to protect citizens from buying encumbered property.</p>
             </div>
 
             <button
               onClick={() => setShowHowItWorks(false)}
-              className="w-full py-2.5 bg-carbon-primary text-white font-bold text-xs rounded-xl"
+              className="w-full py-3 bg-[#5D7052] hover:bg-[#4E5E44] active:scale-95 text-[#F3F4F1] font-semibold text-xs rounded-full shadow-soft transition-all"
             >
-              Close
+              Close Guide
             </button>
           </div>
         </div>
@@ -813,26 +827,26 @@ function VerifyContent() {
 
       {/* Official Escalation Contact Directory Modal */}
       {showContactModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-parchment-border">
-            <div className="flex justify-between items-center border-b border-parchment-border pb-3">
-              <div className="flex items-center gap-2 text-carbon-primary">
-                <PhoneCall className="w-5 h-5 text-emerald-600" />
-                <h3 className="font-bold text-base">Competent Authority Contact Directory</h3>
+        <div className="fixed inset-0 z-50 bg-[#1F241E]/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[#FEFEFA] rounded-3xl max-w-lg w-full p-7 space-y-5 shadow-2xl border border-[#DED8CF]">
+            <div className="flex justify-between items-center border-b border-[#DED8CF]/80 pb-3">
+              <div className="flex items-center gap-2 text-[#2C2C24]">
+                <PhoneCall className="w-5 h-5 text-[#5D7052]" />
+                <h3 className="font-serif font-bold text-lg">Competent Authority Contact Directory</h3>
               </div>
               <button
                 onClick={() => setShowContactModal(false)}
-                className="text-carbon-muted hover:text-carbon-primary text-sm font-bold"
+                className="w-8 h-8 rounded-full bg-[#F0EBE5] hover:bg-[#E6DCCD] text-[#2C2C24] text-xs font-bold flex items-center justify-center transition-colors"
               >
                 ✕
               </button>
             </div>
 
-            <p className="text-xs text-carbon-muted">
+            <p className="text-xs text-[#78786C]">
               For legal title certification, boundary demarcation, or dispute resolution, contact the authorized district offices:
             </p>
 
-            <div className="space-y-3 text-xs">
+            <div className="space-y-2.5 text-xs">
               {[
                 {
                   name: "Mandal Revenue Office / Tehsildar Tenali",
@@ -855,17 +869,17 @@ function VerifyContent() {
                   scope: "Collectorate Compound, Guntur",
                 },
               ].map((office) => (
-                <div key={office.name} className="p-3 rounded-xl bg-parchment-muted border border-parchment-border space-y-1">
-                  <div className="font-bold text-carbon-primary">{office.name}</div>
-                  <div className="text-carbon-muted">{office.matters}</div>
-                  <div className="text-carbon-muted font-mono text-[10px]">{office.scope}</div>
+                <div key={office.name} className="p-3.5 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF] space-y-1">
+                  <div className="font-bold text-[#2C2C24]">{office.name}</div>
+                  <div className="text-[#78786C] text-[11px]">{office.matters}</div>
+                  <div className="text-[#5D7052] font-mono text-[10.5px] font-semibold">{office.scope}</div>
                 </div>
               ))}
             </div>
 
             <button
               onClick={() => setShowContactModal(false)}
-              className="w-full py-2.5 bg-carbon-primary text-white font-bold text-xs rounded-xl"
+              className="w-full py-3 bg-[#5D7052] hover:bg-[#4E5E44] active:scale-95 text-[#F3F4F1] font-semibold text-xs rounded-full shadow-soft transition-all"
             >
               Close Directory
             </button>
@@ -880,9 +894,9 @@ export default function VerifyPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-3">
-          <div className="animate-spin w-8 h-8 border-4 border-terracotta border-t-transparent rounded-full mx-auto" />
-          <p className="text-carbon-muted text-xs font-semibold">Loading verification interface...</p>
+        <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
+          <div className="animate-spin w-8 h-8 border-3 border-[#5D7052] border-t-transparent rounded-full mx-auto" />
+          <p className="text-[#78786C] text-xs font-semibold">Loading verification interface...</p>
         </div>
       }
     >

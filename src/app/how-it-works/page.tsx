@@ -21,13 +21,13 @@ import {
 const steps = [
   {
     number: "01",
-    icon: <Hash className="w-6 h-6 text-terracotta" />,
+    icon: <Hash className="w-6 h-6 text-[#C18C5D]" />,
     title: "Document Fingerprinting (SHA-256 Hashing)",
     summary: "Every land-record document — a Record of Rights extract, a Sub-Registrar deed, or a Survey report — is converted into a unique 64-character SHA-256 cryptographic hash the moment it is submitted.",
     detail:
       "The hash acts as a tamper-evident fingerprint. Even a single changed character in the document produces a completely different hash. The original document is never stored on the public ledger — only its fingerprint is. This ensures privacy while enabling independent verification by any third party who holds a copy of the original document.",
     badge: "Cryptographic Integrity",
-    badgeColor: "text-terracotta bg-terracotta-light border border-terracotta/30",
+    badgeColor: "text-[#C18C5D] bg-[#C18C5D]/10 border border-[#C18C5D]/30",
     example: {
       label: "Sample SHA-256 Fingerprint",
       value: "a3f9c821e047bcd90f41a2d93...",
@@ -132,7 +132,7 @@ const principles = [
     body: "BhuSetu verifies that a document's cryptographic fingerprint matches an authorised record. It never declares legal title or ownership under the Indian Registration Act 1908 or Transfer of Property Act.",
   },
   {
-    icon: <Lock className="w-5 h-5 text-terracotta" />,
+    icon: <Lock className="w-5 h-5 text-[#C18C5D]" />,
     title: "Minimal PII Disclosure",
     body: "Owner names, Aadhaar, and full parcel IDs are never exposed in public API responses. Masking follows the '•••' convention — sharing only the minimum identifier needed for verification.",
   },
@@ -152,86 +152,86 @@ export default function HowItWorksPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-12 space-y-16">
       {/* Hero */}
-      <div className="text-center space-y-5">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-terracotta-light border border-terracotta/30 rounded-full text-terracotta text-xs font-bold">
-          <BookOpen className="w-4 h-4" />
+      <div className="text-center space-y-6">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#5D7052]/10 border border-[#5D7052]/25 rounded-full text-[#5D7052] text-xs font-semibold tracking-wider uppercase">
+          <BookOpen className="w-4 h-4 text-[#5D7052]" />
           Platform Transparency Guide
         </div>
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-carbon-primary tracking-tight leading-tight">
+        <h1 className="font-serif text-3xl sm:text-5xl font-bold text-[#2C2C24] tracking-tight leading-[1.15] max-w-3xl mx-auto">
           How BhuSetu Verification Works
         </h1>
-        <p className="text-base text-carbon-muted max-w-2xl mx-auto leading-relaxed">
+        <p className="text-base text-[#78786C] max-w-2xl mx-auto leading-relaxed">
           BhuSetu is a land-record evidence verification platform built on cryptographic hashing, permissioned blockchain endorsement, and institutional dual-control. This page explains every step from document upload to public verification in plain language.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
           <Link
             href="/verify"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-terracotta hover:bg-terracotta-hover text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
+            className="inline-flex items-center justify-center gap-2 px-7 py-3 bg-[#C18C5D] hover:bg-[#AF7B4E] active:scale-95 text-white text-xs font-semibold rounded-full transition-all duration-200 shadow-[0_4px_16px_-2px_rgba(193,140,93,0.35)]"
           >
             <FileCheck2 className="w-4 h-4" />
-            Verify a Document Now
+            <span>Verify a Document Now</span>
           </Link>
           <Link
             href="/demo"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-carbon-primary hover:bg-carbon-secondary text-white text-sm font-bold rounded-xl transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-7 py-3 bg-[#5D7052] hover:bg-[#4E5E44] active:scale-95 text-[#F3F4F1] text-xs font-semibold rounded-full transition-all duration-200 shadow-soft"
           >
             <Cpu className="w-4 h-4" />
-            Run Interactive Demo
+            <span>Run Interactive Demo</span>
           </Link>
         </div>
       </div>
 
       {/* Statutory Disclaimer Banner */}
-      <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-5">
-        <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-        <div className="text-sm text-amber-900 leading-relaxed">
-          <strong>Statutory Notice:</strong> BhuSetu verifies evidence document fingerprints and records append-only history pursuant to §65B Information Technology Act 2000. Official State Revenue, Registration, Survey/Settlement, and Judicial systems remain the sole legal authority. A verified result indicates evidence authenticity at the recorded time and is <em>not</em> a conclusive guarantee of legal title, freedom from encumbrance, or boundary accuracy.
+      <div className="flex items-start gap-3.5 bg-[#C18C5D]/10 border border-[#C18C5D]/30 rounded-3xl p-6 shadow-xs">
+        <AlertTriangle className="w-5 h-5 text-[#C18C5D] shrink-0 mt-0.5" />
+        <div className="text-xs sm:text-sm text-[#2C2C24] leading-relaxed">
+          <strong className="text-[#C18C5D] font-bold">Statutory Notice:</strong> BhuSetu verifies evidence document fingerprints and records append-only history pursuant to §65B Information Technology Act 2000. Official State Revenue, Registration, Survey/Settlement, and Judicial systems remain the sole legal authority. A verified result indicates evidence authenticity at the recorded time and is <em>not</em> a conclusive guarantee of legal title, freedom from encumbrance, or boundary accuracy.
         </div>
       </div>
 
       {/* Step-by-step Process */}
       <div className="space-y-8">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-carbon-primary">The 7-Step Verification Lifecycle</h2>
-          <p className="text-sm text-carbon-muted">From document upload to public result — every step enforced by code, not policy.</p>
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#2C2C24]">The 7-Step Verification Lifecycle</h2>
+          <p className="text-xs sm:text-sm text-[#78786C]">From document upload to public result — every step enforced by code, not policy.</p>
         </div>
 
         <div className="space-y-6">
           {steps.map((step, idx) => (
             <div
               key={step.number}
-              className="parchment-card rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 relative overflow-hidden"
+              className="organic-card rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 relative overflow-hidden shadow-soft hover:shadow-lift transition-all duration-300 border border-[#DED8CF]"
             >
               {/* Step number accent */}
-              <div className="absolute top-0 right-0 text-[80px] font-extrabold text-parchment-border leading-none select-none pointer-events-none pr-4 pt-1">
+              <div className="absolute top-0 right-0 font-serif text-[84px] font-bold text-[#DED8CF]/40 leading-none select-none pointer-events-none pr-6 pt-2">
                 {step.number}
               </div>
 
               {/* Icon column */}
               <div className="shrink-0 flex sm:flex-col items-center sm:items-center gap-4 sm:gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-parchment-muted border border-parchment-border flex items-center justify-center shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-[#5D7052]/10 border border-[#5D7052]/20 text-[#5D7052] flex items-center justify-center shadow-xs">
                   {step.icon}
                 </div>
                 {idx < steps.length - 1 && (
-                  <div className="hidden sm:block w-px flex-1 bg-parchment-border mt-2" style={{ minHeight: 24 }} />
+                  <div className="hidden sm:block w-px flex-1 bg-[#DED8CF] mt-2" style={{ minHeight: 28 }} />
                 )}
               </div>
 
               {/* Content column */}
               <div className="flex-1 space-y-3 relative z-10">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${step.badgeColor}`}>
+                  <span className="text-[10px] font-bold px-3 py-0.5 rounded-full border border-[#5D7052]/30 bg-[#5D7052]/10 text-[#5D7052]">
                     {step.badge}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-carbon-primary">{step.title}</h3>
-                <p className="text-sm text-carbon-secondary leading-relaxed">{step.summary}</p>
-                <p className="text-xs text-carbon-muted leading-relaxed">{step.detail}</p>
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#2C2C24]">{step.title}</h3>
+                <p className="text-xs sm:text-sm text-[#4A4A40] leading-relaxed">{step.summary}</p>
+                <p className="text-xs text-[#78786C] leading-relaxed">{step.detail}</p>
 
                 {/* Example block */}
-                <div className="flex items-center gap-3 bg-parchment-muted rounded-xl px-4 py-2.5 border border-parchment-border font-mono text-xs">
-                  <span className="text-carbon-muted shrink-0">{step.example.label}:</span>
-                  <code className="text-carbon-primary font-bold truncate">{step.example.value}</code>
+                <div className="flex items-center gap-3 bg-[#FDFCF8] rounded-2xl px-4 py-3 border border-[#DED8CF]/80 font-mono text-xs">
+                  <span className="text-[#78786C] shrink-0 font-sans text-[11px] font-semibold">{step.example.label}:</span>
+                  <code className="text-[#2C2C24] font-bold truncate text-xs">{step.example.value}</code>
                 </div>
               </div>
             </div>
@@ -242,62 +242,64 @@ export default function HowItWorksPage() {
       {/* Core Design Principles */}
       <div className="space-y-6">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-carbon-primary">Core Design Principles</h2>
-          <p className="text-sm text-carbon-muted">What BhuSetu is — and what it is explicitly not.</p>
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#2C2C24]">Core Design Principles</h2>
+          <p className="text-xs sm:text-sm text-[#78786C]">What BhuSetu is — and what it is explicitly not.</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {principles.map((p) => (
-            <div key={p.title} className="parchment-card rounded-2xl p-5 space-y-2">
-              <div className="flex items-center gap-2">
-                {p.icon}
-                <h3 className="font-bold text-carbon-primary text-sm">{p.title}</h3>
+            <div key={p.title} className="organic-card rounded-3xl p-6 space-y-2.5 border border-[#DED8CF] shadow-soft hover:-translate-y-1 transition-all">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center">
+                  {p.icon}
+                </div>
+                <h3 className="font-serif font-bold text-base text-[#2C2C24]">{p.title}</h3>
               </div>
-              <p className="text-xs text-carbon-muted leading-relaxed">{p.body}</p>
+              <p className="text-xs text-[#78786C] leading-relaxed pl-12">{p.body}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Architecture Snapshot */}
-      <div className="bg-carbon-primary text-white rounded-2xl p-6 sm:p-8 space-y-6 border border-slate-800">
+      <div className="bg-[#1F241E] text-[#DED8CF] rounded-3xl p-8 sm:p-10 space-y-6 border border-[#363E34] shadow-soft">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#8FB97C] uppercase tracking-wider mb-1.5">
             <Cpu className="w-4 h-4" />
             Technology Architecture
           </div>
-          <h2 className="text-xl font-bold">What Powers BhuSetu</h2>
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#F3F4F1]">What Powers BhuSetu</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
-          <div className="bg-slate-800/80 rounded-xl p-4 border border-slate-700 space-y-2">
-            <div className="text-emerald-400 font-semibold font-sans">Ledger Layer</div>
-            <div className="text-slate-200">Hyperledger Fabric v2.x</div>
-            <div className="text-slate-400">Channel: land-records-pilot</div>
-            <div className="text-slate-400">Orgs: Revenue · Registration · Survey</div>
+          <div className="bg-[#2A3129] rounded-2xl p-5 border border-[#3D473B] space-y-2">
+            <div className="text-[#8FB97C] font-semibold font-sans text-xs">Ledger Layer</div>
+            <div className="text-[#F3F4F1] font-bold">Hyperledger Fabric v2.x</div>
+            <div className="text-[#A8A399] text-[11px]">Channel: land-records-pilot</div>
+            <div className="text-[#A8A399] text-[11px]">Orgs: Revenue · Registration · Survey</div>
           </div>
-          <div className="bg-slate-800/80 rounded-xl p-4 border border-slate-700 space-y-2">
-            <div className="text-blue-400 font-semibold font-sans">Storage Layer</div>
-            <div className="text-slate-200">AWS DynamoDB</div>
-            <div className="text-slate-400">Tables: parcels · evidence · audit</div>
-            <div className="text-slate-400">S3: bhusetu-evidence-* (server-side encrypted)</div>
+          <div className="bg-[#2A3129] rounded-2xl p-5 border border-[#3D473B] space-y-2">
+            <div className="text-[#E0A97D] font-semibold font-sans text-xs">Storage Layer</div>
+            <div className="text-[#F3F4F1] font-bold">AWS DynamoDB</div>
+            <div className="text-[#A8A399] text-[11px]">Tables: parcels · evidence · audit</div>
+            <div className="text-[#A8A399] text-[11px]">S3: bhusetu-evidence (encrypted)</div>
           </div>
-          <div className="bg-slate-800/80 rounded-xl p-4 border border-slate-700 space-y-2">
-            <div className="text-terracotta font-semibold font-sans">Application Layer</div>
-            <div className="text-slate-200">Next.js 14 App Router (TypeScript)</div>
-            <div className="text-slate-400">Deployed: AWS Lambda + CloudFront</div>
-            <div className="text-slate-400">API: REST · SHA-256 · RBAC</div>
+          <div className="bg-[#2A3129] rounded-2xl p-5 border border-[#3D473B] space-y-2">
+            <div className="text-[#E6DCCD] font-semibold font-sans text-xs">Application Layer</div>
+            <div className="text-[#F3F4F1] font-bold">Next.js 15 App Router</div>
+            <div className="text-[#A8A399] text-[11px]">Deployed: AWS Lambda + CloudFront</div>
+            <div className="text-[#A8A399] text-[11px]">API: REST · SHA-256 · RBAC</div>
           </div>
         </div>
       </div>
 
       {/* CTA */}
       <div className="text-center space-y-4 py-4">
-        <h2 className="text-xl font-bold text-carbon-primary">Ready to verify a document?</h2>
-        <p className="text-sm text-carbon-muted">Submit a document hash or paste a verification reference to get an instant result.</p>
+        <h2 className="font-serif text-2xl font-bold text-[#2C2C24]">Ready to verify a document?</h2>
+        <p className="text-xs sm:text-sm text-[#78786C]">Submit a document hash or paste a verification reference to get an instant result.</p>
         <Link
           href="/verify"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-terracotta hover:bg-terracotta-hover text-white font-bold rounded-xl transition-colors shadow-sm text-sm"
+          className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#C18C5D] hover:bg-[#AF7B4E] active:scale-95 text-white font-semibold rounded-full transition-all duration-200 shadow-[0_4px_16px_-2px_rgba(193,140,93,0.35)] text-xs sm:text-sm"
         >
-          Go to Verification
+          <span>Go to Verification</span>
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

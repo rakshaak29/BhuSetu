@@ -28,18 +28,20 @@ type ActionFilter = "ALL" | string;
 
 function OutcomeBadge({ outcome }: { outcome: string }) {
   const styles: Record<string, string> = {
-    SUCCESS: "bg-emerald-100 text-emerald-800 border border-emerald-200",
-    DENIED: "bg-rose-100 text-rose-800 border border-rose-200",
-    ERROR: "bg-amber-100 text-amber-800 border border-amber-200",
+    SUCCESS: "bg-[#EEF4EB] text-[#2D5A27] border border-[#A8C89C]",
+    DENIED: "bg-[#FFF1F2] text-[#9F1239] border border-[#FECDD3]",
+    ERROR: "bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]",
   };
   const icons: Record<string, React.ReactNode> = {
-    SUCCESS: <CheckCircle2 className="w-3 h-3" />,
-    DENIED: <XCircle className="w-3 h-3" />,
-    ERROR: <AlertTriangle className="w-3 h-3" />,
+    SUCCESS: <CheckCircle2 className="w-3 h-3 text-[#437C3C]" />,
+    DENIED: <XCircle className="w-3 h-3 text-[#E11D48]" />,
+    ERROR: <AlertTriangle className="w-3 h-3 text-[#D97706]" />,
   };
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold ${styles[outcome] || "bg-slate-100 text-slate-700"}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono ${
+        styles[outcome] || "bg-[#F0EBE5] text-[#78786C] border border-[#DED8CF]"
+      }`}
     >
       {icons[outcome]}
       {outcome}
@@ -49,14 +51,14 @@ function OutcomeBadge({ outcome }: { outcome: string }) {
 
 function ActionBadge({ action }: { action: string }) {
   const color = action.includes("APPROVE") || action.includes("VERIFY")
-    ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+    ? "text-[#2D5A27] bg-[#EEF4EB] border-[#A8C89C]"
     : action.includes("DISPUTE") || action.includes("REJECT")
-    ? "text-rose-700 bg-rose-50 border-rose-200"
+    ? "text-[#9F1239] bg-[#FFF1F2] border-[#FECDD3]"
     : action.includes("EXPORT") || action.includes("AUDIT")
-    ? "text-purple-700 bg-purple-50 border-purple-200"
-    : "text-slate-700 bg-slate-50 border-slate-200";
+    ? "text-[#6B21A8] bg-[#F3E8FF] border-[#E9D5FF]"
+    : "text-[#5D7052] bg-[#F0EBE5] border-[#DED8CF]";
   return (
-    <span className={`inline-block px-1.5 py-0.5 rounded border text-[10px] font-mono font-semibold ${color}`}>
+    <span className={`inline-block px-2.5 py-0.5 rounded-full border text-[10.5px] font-mono font-semibold ${color}`}>
       {action}
     </span>
   );
@@ -131,91 +133,98 @@ export default function AuditPage() {
   const errorCount = auditLogs.filter((l) => l.outcome === "ERROR").length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 space-y-8 animate-fadeIn">
       {/* Page Header */}
-      <div className="bg-carbon-primary text-white rounded-2xl p-6 border border-slate-800 space-y-4">
-        <div className="flex items-center gap-2 mb-1">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#242A22] via-[#2A3127] to-[#1F241E] text-[#F3F4F1] p-6 sm:p-8 border border-[#3E4A3B] shadow-float space-y-6">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#5D7052]/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-[#C18C5D]/15 rounded-full blur-3xl pointer-events-none -mb-20" />
+
+        <div className="relative z-10 flex items-center gap-2">
           <Link
             href="/officer"
-            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1A1F18]/90 border border-[#3E4A3B] text-xs font-semibold text-[#A8AEA4] hover:text-white hover:border-[#5D7052] transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to Officer Workspace
           </Link>
         </div>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-              <History className="w-4 h-4" />
-              Immutable System Audit Trail
+
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#5D7052]/30 border border-[#5D7052]/50 text-[#C9D6C3] text-[11px] font-semibold tracking-wider uppercase">
+              <History className="w-3.5 h-3.5 text-[#A3B899]" />
+              Immutable District Ledger Audit Trail
             </div>
-            <h1 className="text-2xl font-bold mt-1">Audit Log & Export Centre</h1>
-            <p className="text-xs text-slate-400 mt-1">
-              All system actions — logins, reads, writes, approvals, and dispute events — logged with correlation IDs per §65B IT Act 2000.
+            <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white">
+              Audit Log & Export Centre
+            </h1>
+            <p className="text-xs sm:text-sm text-[#A8AEA4] max-w-2xl leading-relaxed">
+              All system events — identity lookups, verification inquiries, ledger writes, approvals, and dispute actions — logged with correlation IDs per §65B IT Act 2000.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
             <button
               onClick={fetchAuditLogs}
               disabled={loading}
-              className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl border border-slate-700 transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#1A1F18]/90 hover:bg-[#242A22] text-[#F3F4F1] text-xs font-semibold rounded-full border border-[#3E4A3B] transition-colors shadow-soft"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-[#A3B899] ${loading ? "animate-spin" : ""}`} />
               Refresh
             </button>
             <a
               href="/api/v1/audit/export"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-4 py-2 bg-terracotta hover:bg-terracotta-hover text-white text-xs font-bold rounded-xl transition-colors shadow-sm"
+              className="btn-shine inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#C18C5D] hover:bg-[#A97447] text-white text-xs font-semibold rounded-full transition-all shadow-soft active:scale-95"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-3.5 h-3.5" />
               Export Full JSON
             </a>
           </div>
         </div>
 
         {/* Summary KPIs */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-slate-800">
-          <div className="bg-slate-800/80 rounded-xl p-3 text-center">
-            <Activity className="w-4 h-4 text-slate-400 mx-auto mb-1" />
-            <div className="text-2xl font-bold text-white">{auditLogs.length}</div>
-            <div className="text-[10px] text-slate-400 uppercase tracking-wider">Total Events</div>
+        <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3.5 pt-2 border-t border-[#3E4A3B]/80">
+          <div className="bg-[#1A1F18]/80 rounded-2xl p-4 text-center border border-[#3E4A3B]/60 shadow-inner-soft">
+            <Activity className="w-4 h-4 text-[#8B9387] mx-auto mb-1.5" />
+            <div className="font-serif text-2xl font-bold text-white">{auditLogs.length}</div>
+            <div className="text-[10.5px] text-[#8B9387] uppercase tracking-wider mt-0.5">Total Events</div>
           </div>
-          <div className="bg-emerald-950/60 rounded-xl p-3 text-center border border-emerald-900/40">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
-            <div className="text-2xl font-bold text-emerald-400">{successCount}</div>
-            <div className="text-[10px] text-emerald-500 uppercase tracking-wider">Success</div>
+          <div className="bg-[#152317]/80 rounded-2xl p-4 text-center border border-[#2D5A27]/40 shadow-inner-soft">
+            <CheckCircle2 className="w-4 h-4 text-[#A8C89C] mx-auto mb-1.5" />
+            <div className="font-serif text-2xl font-bold text-[#A8C89C]">{successCount}</div>
+            <div className="text-[10.5px] text-[#A8C89C] uppercase tracking-wider mt-0.5">Success</div>
           </div>
-          <div className="bg-rose-950/60 rounded-xl p-3 text-center border border-rose-900/40">
-            <XCircle className="w-4 h-4 text-rose-400 mx-auto mb-1" />
-            <div className="text-2xl font-bold text-rose-400">{deniedCount}</div>
-            <div className="text-[10px] text-rose-500 uppercase tracking-wider">Denied</div>
+          <div className="bg-[#291316]/80 rounded-2xl p-4 text-center border border-[#9F1239]/40 shadow-inner-soft">
+            <XCircle className="w-4 h-4 text-[#FECDD3] mx-auto mb-1.5" />
+            <div className="font-serif text-2xl font-bold text-[#FECDD3]">{deniedCount}</div>
+            <div className="text-[10.5px] text-[#FECDD3] uppercase tracking-wider mt-0.5">Denied</div>
           </div>
-          <div className="bg-amber-950/60 rounded-xl p-3 text-center border border-amber-900/40">
-            <AlertTriangle className="w-4 h-4 text-amber-400 mx-auto mb-1" />
-            <div className="text-2xl font-bold text-amber-400">{errorCount}</div>
-            <div className="text-[10px] text-amber-500 uppercase tracking-wider">Errors</div>
+          <div className="bg-[#261B0E]/80 rounded-2xl p-4 text-center border border-[#B45309]/40 shadow-inner-soft">
+            <AlertTriangle className="w-4 h-4 text-[#FDE68A] mx-auto mb-1.5" />
+            <div className="font-serif text-2xl font-bold text-[#FDE68A]">{errorCount}</div>
+            <div className="text-[10.5px] text-[#FDE68A] uppercase tracking-wider mt-0.5">Errors</div>
           </div>
         </div>
       </div>
 
       {/* Filters Panel */}
-      <div className="parchment-card rounded-2xl p-4 space-y-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-carbon-muted uppercase tracking-wider">
-          <Filter className="w-4 h-4" />
-          Filter & Search
+      <div className="organic-card rounded-3xl p-5 sm:p-6 space-y-4 border border-[#DED8CF] shadow-soft">
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#78786C] uppercase tracking-wider">
+          <Filter className="w-3.5 h-3.5 text-[#5D7052]" />
+          Filter & Search Audit Stream
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-carbon-muted pointer-events-none" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#78786C] pointer-events-none" />
             <input
               type="text"
               placeholder="Search actor, resource, action, correlation ID…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs border border-parchment-border rounded-xl bg-white text-carbon-primary focus:outline-none focus:ring-2 focus:ring-terracotta/30"
+              className="w-full pl-10 pr-3.5 py-2.5 text-xs border border-[#DED8CF] rounded-2xl bg-[#FEFEFA] text-[#2C2C24] placeholder-[#78786C]/70 focus:outline-none focus:ring-2 focus:ring-[#5D7052]/20 focus:border-[#5D7052] transition-all"
             />
           </div>
 
@@ -223,7 +232,7 @@ export default function AuditPage() {
           <select
             value={outcomeFilter}
             onChange={(e) => setOutcomeFilter(e.target.value as OutcomeFilter)}
-            className="w-full px-3 py-2 text-xs border border-parchment-border rounded-xl bg-white text-carbon-primary focus:outline-none focus:ring-2 focus:ring-terracotta/30"
+            className="w-full px-3.5 py-2.5 text-xs border border-[#DED8CF] rounded-2xl bg-[#FEFEFA] text-[#2C2C24] focus:outline-none focus:ring-2 focus:ring-[#5D7052]/20 focus:border-[#5D7052] transition-all cursor-pointer"
           >
             <option value="ALL">All Outcomes</option>
             <option value="SUCCESS">SUCCESS</option>
@@ -235,7 +244,7 @@ export default function AuditPage() {
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
-            className="w-full px-3 py-2 text-xs border border-parchment-border rounded-xl bg-white text-carbon-primary focus:outline-none focus:ring-2 focus:ring-terracotta/30"
+            className="w-full px-3.5 py-2.5 text-xs border border-[#DED8CF] rounded-2xl bg-[#FEFEFA] text-[#2C2C24] focus:outline-none focus:ring-2 focus:ring-[#5D7052]/20 focus:border-[#5D7052] transition-all cursor-pointer"
           >
             <option value="ALL">All Action Types</option>
             {uniqueActions.map((action) => (
@@ -247,14 +256,14 @@ export default function AuditPage() {
         </div>
 
         {/* Active filter summary */}
-        <div className="flex items-center justify-between text-[10px] text-carbon-muted font-mono">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-[#78786C] font-mono pt-1">
           <span>
-            Showing <strong className="text-carbon-primary">{filteredLogs.length}</strong> of{" "}
-            <strong className="text-carbon-primary">{auditLogs.length}</strong> events
+            Showing <strong className="text-[#2C2C24]">{filteredLogs.length}</strong> of{" "}
+            <strong className="text-[#2C2C24]">{auditLogs.length}</strong> events
             {lastRefreshed && (
               <>
                 {" "}&bull;{" "}
-                <span className="flex items-center gap-1 inline-flex">
+                <span className="inline-flex items-center gap-1 text-[#5D7052]">
                   <Clock className="w-3 h-3" />
                   Refreshed {lastRefreshed.toLocaleTimeString("en-IN")}
                 </span>
@@ -268,7 +277,7 @@ export default function AuditPage() {
                 setActionFilter("ALL");
                 setSearchQuery("");
               }}
-              className="text-terracotta hover:underline font-semibold"
+              className="text-[#C18C5D] hover:underline font-semibold self-start sm:self-auto"
             >
               Clear all filters
             </button>
@@ -277,103 +286,110 @@ export default function AuditPage() {
       </div>
 
       {/* Audit Table */}
-      <div className="parchment-card rounded-2xl border border-parchment-border overflow-hidden">
+      <div className="organic-card rounded-3xl border border-[#DED8CF] overflow-hidden shadow-soft">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-16 space-y-3">
-            <RefreshCw className="w-8 h-8 text-carbon-muted animate-spin" />
-            <span className="text-xs text-carbon-muted">Loading audit events…</span>
+          <div className="flex flex-col items-center justify-center py-20 space-y-3">
+            <RefreshCw className="w-8 h-8 text-[#5D7052] animate-spin" />
+            <span className="text-xs text-[#78786C]">Loading audit events…</span>
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center py-12 space-y-3">
-            <AlertTriangle className="w-8 h-8 text-status-mismatch-text" />
-            <p className="text-xs text-status-mismatch-text font-semibold">{error}</p>
-            <button onClick={fetchAuditLogs} className="text-xs underline text-carbon-muted hover:text-carbon-primary">
+          <div className="flex flex-col items-center justify-center py-16 space-y-3">
+            <AlertTriangle className="w-8 h-8 text-[#9E2A2B]" />
+            <p className="text-xs text-[#9E2A2B] font-semibold">{error}</p>
+            <button onClick={fetchAuditLogs} className="text-xs underline text-[#78786C] hover:text-[#2C2C24]">
               Retry
             </button>
           </div>
         ) : filteredLogs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 space-y-3">
-            <FileText className="w-8 h-8 text-carbon-muted" />
-            <p className="text-xs text-carbon-muted">No audit events match your current filters.</p>
+          <div className="flex flex-col items-center justify-center py-16 space-y-3">
+            <FileText className="w-8 h-8 text-[#78786C]" />
+            <p className="text-xs text-[#78786C]">No audit events match your current filters.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono min-w-[800px]">
-              <thead className="bg-parchment-muted border-b border-parchment-border text-carbon-muted sticky top-0">
+              <thead className="bg-[#F0EBE5] border-b border-[#DED8CF] text-[#78786C] sticky top-0">
                 <tr>
-                  <th className="p-3 font-semibold text-[10px] uppercase tracking-wider w-28">Time (IST)</th>
-                  <th className="p-3 font-semibold text-[10px] uppercase tracking-wider">Actor</th>
-                  <th className="p-3 font-semibold text-[10px] uppercase tracking-wider">Action</th>
-                  <th className="p-3 font-semibold text-[10px] uppercase tracking-wider">Resource</th>
-                  <th className="p-3 font-semibold text-[10px] uppercase tracking-wider">Jurisdiction</th>
-                  <th className="p-3 font-semibold text-[10px] uppercase tracking-wider">Outcome</th>
-                  <th className="p-3 font-semibold text-[10px] uppercase tracking-wider w-8"></th>
+                  <th className="p-3.5 font-semibold text-[10px] uppercase tracking-wider w-32">Time (IST)</th>
+                  <th className="p-3.5 font-semibold text-[10px] uppercase tracking-wider">Actor</th>
+                  <th className="p-3.5 font-semibold text-[10px] uppercase tracking-wider">Action</th>
+                  <th className="p-3.5 font-semibold text-[10px] uppercase tracking-wider">Resource</th>
+                  <th className="p-3.5 font-semibold text-[10px] uppercase tracking-wider">Jurisdiction</th>
+                  <th className="p-3.5 font-semibold text-[10px] uppercase tracking-wider">Outcome</th>
+                  <th className="p-3.5 font-semibold text-[10px] uppercase tracking-wider w-8"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-parchment-border">
+              <tbody className="divide-y divide-[#DED8CF]/70 bg-[#FEFEFA]">
                 {filteredLogs.map((log) => {
                   const isExpanded = expandedRow === log.auditEventId;
                   return (
-                    <>
+                    <div key={log.auditEventId} className="contents">
                       <tr
-                        key={log.auditEventId}
-                        className="hover:bg-parchment-muted cursor-pointer transition-colors"
+                        className="hover:bg-[#F0EBE5]/50 cursor-pointer transition-colors"
                         onClick={() => setExpandedRow(isExpanded ? null : log.auditEventId)}
                       >
-                        <td className="p-3 text-carbon-muted whitespace-nowrap">
-                          {new Date(log.occurredAt).toLocaleTimeString("en-IN", { hour12: false })}
-                          <div className="text-[9px] text-carbon-muted/70">
+                        <td className="p-3.5 text-[#78786C] whitespace-nowrap">
+                          <span className="font-semibold text-[#2C2C24]">
+                            {new Date(log.occurredAt).toLocaleTimeString("en-IN", { hour12: false })}
+                          </span>
+                          <div className="text-[9.5px] text-[#78786C]/70">
                             {new Date(log.occurredAt).toLocaleDateString("en-IN")}
                           </div>
                         </td>
-                        <td className="p-3">
-                          <div className="font-bold text-carbon-primary">{log.actorId}</div>
-                          <div className="text-[10px] text-carbon-muted font-sans">{log.actorRole}</div>
+                        <td className="p-3.5">
+                          <div className="font-bold text-[#2C2C24]">{log.actorId}</div>
+                          <div className="text-[10px] text-[#78786C] font-sans">{log.actorRole}</div>
                         </td>
-                        <td className="p-3">
+                        <td className="p-3.5">
                           <ActionBadge action={log.action} />
                         </td>
-                        <td className="p-3 text-carbon-secondary">
-                          <span className="text-[10px] text-carbon-muted">{log.resourceType}</span>
-                          <div className="font-semibold text-carbon-primary truncate max-w-[160px]">{log.resourceId}</div>
+                        <td className="p-3.5">
+                          <span className="text-[10px] text-[#78786C] block">{log.resourceType}</span>
+                          <div className="font-semibold text-[#2C2C24] truncate max-w-[170px]">{log.resourceId}</div>
                         </td>
-                        <td className="p-3 text-carbon-muted">{log.jurisdiction}</td>
-                        <td className="p-3">
+                        <td className="p-3.5 text-[#78786C]">{log.jurisdiction}</td>
+                        <td className="p-3.5">
                           <OutcomeBadge outcome={log.outcome} />
                         </td>
-                        <td className="p-3 text-carbon-muted">
+                        <td className="p-3.5 text-[#78786C]">
                           {isExpanded ? (
-                            <ChevronUp className="w-3.5 h-3.5" />
+                            <ChevronUp className="w-4 h-4 text-[#5D7052]" />
                           ) : (
-                            <ChevronDown className="w-3.5 h-3.5" />
+                            <ChevronDown className="w-4 h-4" />
                           )}
                         </td>
                       </tr>
 
                       {/* Expandable row: correlation ID + details */}
                       {isExpanded && (
-                        <tr key={`${log.auditEventId}-detail`} className="bg-parchment-muted">
-                          <td colSpan={7} className="px-6 py-4">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[11px]">
-                              <div className="space-y-1.5">
-                                <div className="font-sans font-semibold text-carbon-muted uppercase tracking-wider text-[10px]">Identifiers</div>
-                                <div>
-                                  <span className="text-carbon-muted">Audit Event ID: </span>
-                                  <code className="text-carbon-primary">{log.auditEventId}</code>
+                        <tr className="bg-[#F0EBE5]/40 border-b border-[#DED8CF]">
+                          <td colSpan={7} className="px-6 py-5">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-[11px]">
+                              <div className="space-y-2 bg-[#FEFEFA] p-4 rounded-2xl border border-[#DED8CF]">
+                                <div className="font-sans font-bold text-[#78786C] uppercase tracking-wider text-[10px]">
+                                  Cryptographic Identifiers
                                 </div>
-                                <div>
-                                  <span className="text-carbon-muted">Correlation ID: </span>
-                                  <code className="text-carbon-primary">{log.correlationId}</code>
-                                </div>
-                                <div>
-                                  <span className="text-carbon-muted">Full Timestamp: </span>
-                                  <code className="text-carbon-primary">{log.occurredAt}</code>
+                                <div className="space-y-1">
+                                  <div>
+                                    <span className="text-[#78786C]">Audit Event ID: </span>
+                                    <code className="text-[#2C2C24] font-bold">{log.auditEventId}</code>
+                                  </div>
+                                  <div>
+                                    <span className="text-[#78786C]">Correlation ID: </span>
+                                    <code className="text-[#5D7052] font-semibold">{log.correlationId}</code>
+                                  </div>
+                                  <div>
+                                    <span className="text-[#78786C]">Full Timestamp: </span>
+                                    <code className="text-[#2C2C24]">{log.occurredAt}</code>
+                                  </div>
                                 </div>
                               </div>
                               {log.details && Object.keys(log.details).length > 0 && (
-                                <div className="space-y-1.5">
-                                  <div className="font-sans font-semibold text-carbon-muted uppercase tracking-wider text-[10px]">Event Details</div>
-                                  <pre className="text-carbon-primary bg-white border border-parchment-border rounded-lg p-3 text-[10px] overflow-auto max-h-28">
+                                <div className="space-y-2 bg-[#FEFEFA] p-4 rounded-2xl border border-[#DED8CF]">
+                                  <div className="font-sans font-bold text-[#78786C] uppercase tracking-wider text-[10px]">
+                                    Event Payload Snapshot
+                                  </div>
+                                  <pre className="text-[#2C2C24] bg-[#F0EBE5]/60 border border-[#DED8CF] rounded-xl p-3 text-[10.5px] overflow-auto max-h-32">
                                     {JSON.stringify(log.details, null, 2)}
                                   </pre>
                                 </div>
@@ -382,7 +398,7 @@ export default function AuditPage() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </div>
                   );
                 })}
               </tbody>
@@ -392,23 +408,23 @@ export default function AuditPage() {
 
         {/* Table Footer */}
         {!loading && !error && auditLogs.length > 0 && (
-          <div className="px-4 py-3 border-t border-parchment-border bg-parchment-muted flex justify-between items-center text-[10px] font-mono text-carbon-muted">
-            <span>
-              <ShieldCheck className="inline w-3 h-3 text-emerald-600 mr-1" />
+          <div className="px-5 py-3.5 border-t border-[#DED8CF] bg-[#F0EBE5] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[10.5px] font-mono text-[#78786C]">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#5D7052]" />
               Append-only ledger — no audit events can be deleted or modified post-record.
             </span>
             <span>
-              Export snapshot: <strong>{new Date(exportTimestamp).toLocaleString("en-IN")}</strong>
+              Export snapshot: <strong className="text-[#2C2C24]">{new Date(exportTimestamp).toLocaleString("en-IN")}</strong>
             </span>
           </div>
         )}
       </div>
 
       {/* Legal Footer Note */}
-      <div className="flex items-start gap-3 text-[11px] text-carbon-muted bg-parchment-muted border border-parchment-border rounded-xl p-4">
-        <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-        <p>
-          <strong className="text-carbon-secondary">§65B IT Act 2000 Compliance:</strong> This audit trail is admissible as electronic evidence. All events are cryptographically time-stamped and stored in append-only DynamoDB tables with no delete privileges granted to any role. Audit export access is restricted to users with the <code className="bg-parchment-border px-1 rounded">AUDITOR</code> or <code className="bg-parchment-border px-1 rounded">ADMIN</code> role.
+      <div className="flex items-start gap-3 text-xs text-[#78786C] bg-[#F0EBE5]/60 border border-[#DED8CF] rounded-3xl p-5 sm:p-6 shadow-soft">
+        <ShieldCheck className="w-5 h-5 text-[#5D7052] shrink-0 mt-0.5" />
+        <p className="leading-relaxed">
+          <strong className="text-[#2C2C24]">§65B Indian Evidence / IT Act 2000 Compliance:</strong> This audit trail is admissible as electronic evidence. All events are cryptographically time-stamped and stored in append-only DynamoDB tables with no delete privileges granted to any role. Audit export access is restricted to users with the <code className="bg-[#E6DCCD] text-[#2C2C24] px-1.5 py-0.5 rounded-full font-mono text-[11px]">AUDITOR</code> or <code className="bg-[#E6DCCD] text-[#2C2C24] px-1.5 py-0.5 rounded-full font-mono text-[11px]">ADMIN</code> role.
         </p>
       </div>
     </div>
