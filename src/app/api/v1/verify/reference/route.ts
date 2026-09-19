@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { repository } from '@/lib/db/repository';
 import { maskParcelReference } from '@/lib/crypto/hash';
-import { PublicVerificationResponse } from '@/lib/types/domain';
-
-export const LEGAL_DISCLAIMER = "This result confirms an evidence match to an authorized record at the time shown. It is not, by itself, a determination of legal title, ownership, encumbrance, or boundary.";
+import { PublicVerificationResponse, LEGAL_DISCLAIMER } from '@/lib/types/domain';
 
 export async function POST(req: NextRequest) {
   try {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, Search, FileCheck2, UserCheck, PlayCircle, Lock, Cpu, CheckCircle2, AlertTriangle, FileSpreadsheet } from "lucide-react";
+import { ShieldCheck, Search, FileCheck2, UserCheck, PlayCircle, Lock, Cpu, CheckCircle2, AlertTriangle, FileSpreadsheet, Cloud, DollarSign } from "lucide-react";
 
 export default function Home() {
   const [quickRef, setQuickRef] = useState("");
@@ -126,7 +126,31 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* AWS Architecture & Credit Guardrail Highlight Card */}
+        <div className="mt-8 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 rounded-2xl p-6 sm:p-8 text-white border border-slate-700 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-semibold uppercase tracking-wider border border-amber-500/30">
+              <DollarSign className="w-3.5 h-3.5" />
+              AWS Pilot Credit Guardrails • ap-south-1
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+              AWS Serverless Architecture & $100 Budget Guardrail
+            </h2>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Enforcing TRD Section 3 cost-guardrails on AWS Asia Pacific (Mumbai). Real-time monitoring across DynamoDB, private S3 evidence, Lambda, and KMS with automated alert thresholds at $10, $25, $50, $75, and emergency circuit breaker.
+            </p>
+          </div>
+          <Link
+            href="/aws-credits"
+            className="px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-sm font-extrabold rounded-xl shadow-lg transition-colors shrink-0 flex items-center gap-2"
+          >
+            <Cloud className="w-4 h-4" />
+            <span>Open AWS Credit Guardrails</span>
+          </Link>
+        </div>
       </section>
+
 
       {/* Core Architecture Principles */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "tsx tests/verification.test.ts"
+    "test": "tsx tests/verification.test.ts && tsx tests/aws-guardrails.test.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",
