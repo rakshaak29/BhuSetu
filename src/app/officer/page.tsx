@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { 
   UserCheck, 
   ShieldCheck, 
@@ -56,18 +57,20 @@ export default function OfficerPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
+      // Fetch pending evidence events from DynamoDB
+      const pendingRes = await fetch("/api/v1/evidence/pending");
+      const pendingData = await pendingRes.json();
+      setPendingEvents(pendingData.events || []);
+
+      // Fetch all parcels from DynamoDB
+      const parcelsRes = await fetch("/api/v1/parcels");
+      const parcelsData = await parcelsRes.json();
+      setParcels(parcelsData.parcels || []);
+
+      // Fetch audit logs from DynamoDB
       const auditRes = await fetch("/api/v1/audit/export");
       const auditData = await auditRes.json();
       setAuditLogs(auditData.auditEvents || []);
-
-      const res41 = await fetch("/api/v1/parcels/PCL-AP-GNT-041/history");
-      const d41 = await res41.json();
-      const res42 = await fetch("/api/v1/parcels/PCL-AP-GNT-042/history");
-      const d42 = await res42.json();
-      const res43 = await fetch("/api/v1/parcels/PCL-AP-GNT-043/history");
-      const d43 = await res43.json();
-
-      setParcels([d41.parcel, d42.parcel, d43.parcel].filter(Boolean));
     } catch (err) {
       console.error(err);
     } finally {
@@ -588,13 +591,21 @@ export default function OfficerPage() {
                   <div>Scope: <code className="text-carbon-primary">{p.stateCode}/{p.districtCode}/{p.tehsilCode}</code></div>
                 </div>
 
-                <button
-                  onClick={() => viewParcelTimeline(p.parcelId)}
-                  className="w-full py-2 bg-carbon-primary hover:bg-carbon-secondary text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>View Fabric Ledger Timeline</span>
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => viewParcelTimeline(p.parcelId)}
+                    className="flex-1 py-2 bg-carbon-primary hover:bg-carbon-secondary text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Ledger</span>
+                  </button>
+                  <Link
+                    href={`/officer/parcels/${p.parcelId}`}
+                    className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-colors text-center"
+                  >
+                    <span>Full Timeline &rarr;</span>
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
