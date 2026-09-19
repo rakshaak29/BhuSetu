@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateSha256, maskParcelReference } from '@/lib/crypto/hash';
 import { repository } from '@/lib/db/repository';
-import { PublicVerificationResponse } from '@/lib/types/domain';
-import { LEGAL_DISCLAIMER } from '../reference/route';
+import { PublicVerificationResponse, LEGAL_DISCLAIMER } from '@/lib/types/domain';
 
 export async function POST(req: NextRequest) {
   try {

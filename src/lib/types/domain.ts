@@ -1,3 +1,6 @@
+export const LEGAL_DISCLAIMER = 
+  "This result confirms an evidence match to an authorized record at the time shown. It is not, by itself, a determination of legal title, ownership, encumbrance, or boundary.";
+
 export type VerificationStatus = 
   | 'VERIFIED'
   | 'MISMATCH'

@@ -128,6 +128,8 @@ export default function Home() {
         </div>
       </section>
 
+
+
       {/* Core Architecture Principles */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="bg-slate-100 rounded-2xl p-8 border border-slate-200 space-y-6">
