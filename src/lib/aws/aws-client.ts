@@ -249,22 +249,36 @@ export async function getEvidenceByHashFromDynamo(hashHex: string): Promise<Evid
 }
 
 /**
- * Query all evidence events for a parcel (scan with filter, sorted by createdAt desc)
+ * Query all evidence events for a parcel using parcelId-createdAt GSI (sorted by createdAt desc)
+ * Falls back to Scan with filter if the GSI is not yet active.
  */
 export async function getEventsForParcelFromDynamo(parcelId: string): Promise<EvidenceEvent[]> {
   try {
     const res = await dynamoDocClient.send(
-      new ScanCommand({
+      new QueryCommand({
         TableName: REAL_AWS_RESOURCES.tables.evidence,
-        FilterExpression: 'parcelId = :pid',
+        IndexName: 'parcelId-createdAt-index',
+        KeyConditionExpression: 'parcelId = :pid',
         ExpressionAttributeValues: { ':pid': parcelId },
+        ScanIndexForward: false, // descending by createdAt
       })
     );
-    const items = (res.Items as EvidenceEvent[]) || [];
-    return items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  } catch (err) {
-    console.warn(`DynamoDB scan failed for parcel events ${parcelId}:`, err);
-    return [];
+    return (res.Items as EvidenceEvent[]) || [];
+  } catch (gsiErr) {
+    try {
+      const res = await dynamoDocClient.send(
+        new ScanCommand({
+          TableName: REAL_AWS_RESOURCES.tables.evidence,
+          FilterExpression: 'parcelId = :pid',
+          ExpressionAttributeValues: { ':pid': parcelId },
+        })
+      );
+      const items = (res.Items as EvidenceEvent[]) || [];
+      return items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    } catch (err) {
+      console.warn(`DynamoDB query/scan failed for parcel events ${parcelId}:`, err);
+      return [];
+    }
   }
 }
 
