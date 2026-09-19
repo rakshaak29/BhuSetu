@@ -1,5 +1,11 @@
 import { Parcel, EvidenceEvent, AuditEvent, VerificationStatus } from '../types/domain';
 import { fabricLedgerEngine } from '../ledger/fabric-engine';
+import {
+  saveParcelToDynamo,
+  saveEvidenceToDynamo,
+  saveAuditToDynamo,
+  uploadEvidenceToS3,
+} from '../aws/aws-client';
 
 // Initial synthetic seed evidence documents
 const DEMO_DOC_CONTENTS: Record<string, string> = {
@@ -185,6 +191,7 @@ class DataRepository {
     parcel.version += 1;
     parcel.updatedAt = new Date().toISOString();
     this.parcels.set(parcel.parcelId, parcel);
+    saveParcelToDynamo(parcel).catch((err) => console.warn('DynamoDB parcel sync skipped:', err.message));
   }
 
   // --- Evidence Methods ---
@@ -216,11 +223,15 @@ class DataRepository {
 
   public saveEvidenceEvent(event: EvidenceEvent): void {
     this.evidenceEvents.set(event.eventId, event);
+    saveEvidenceToDynamo(event).catch((err) => console.warn('DynamoDB evidence sync skipped:', err.message));
   }
 
   // --- Document Storage Methods ---
   public storeDocument(hashHex: string, content: string): void {
     this.documents.set(hashHex, content);
+    uploadEvidenceToS3(`evidence/documents/${hashHex}.enc`, content, { sha256: hashHex }).catch((err) =>
+      console.warn('S3 document sync skipped:', err.message)
+    );
   }
 
   // --- Audit Log Methods ---
@@ -231,6 +242,7 @@ class DataRepository {
       occurredAt: new Date().toISOString()
     };
     this.auditLogs.unshift(fullEvent);
+    saveAuditToDynamo(fullEvent).catch((err) => console.warn('DynamoDB audit sync skipped:', err.message));
     return fullEvent;
   }
 

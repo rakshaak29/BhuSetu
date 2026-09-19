@@ -7,9 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "tsx tests/verification.test.ts && tsx tests/aws-guardrails.test.ts"
+    "test": "tsx tests/verification.test.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1136.0",
+    "@aws-sdk/client-s3": "^3.1136.0",
+    "@aws-sdk/lib-dynamodb": "^3.1136.0",
     "clsx": "^2.1.1",
     "js-sha256": "^0.11.0",
     "lucide-react": "^0.475.0",

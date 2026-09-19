@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Link from "next/link";
-import { ShieldCheck, Lock, Landmark, FileCheck2, UserCheck, Cloud } from "lucide-react";
+import { ShieldCheck, Lock, Landmark, FileCheck2, UserCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "BhuSetu | Blockchain-Based Land Ownership Verification",
@@ -45,13 +45,6 @@ export default function RootLayout({
                 >
                   <UserCheck className="w-4 h-4 text-blue-400" />
                   <span>Officer Portal</span>
-                </Link>
-                <Link
-                  href="/aws-credits"
-                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-800 flex items-center gap-1.5 transition-colors text-slate-200"
-                >
-                  <Cloud className="w-4 h-4 text-amber-400" />
-                  <span>AWS Credits</span>
                 </Link>
                 <Link
                   href="/demo"

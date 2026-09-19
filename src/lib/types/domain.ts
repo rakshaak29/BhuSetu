@@ -111,33 +111,3 @@ export interface UserSession {
   role: UserRole;
   jurisdiction: Jurisdiction;
 }
-
-export interface AwsServiceCost {
-  serviceName: string;
-  category: string;
-  usageUnit: string;
-  quantity: number;
-  ratePerUnit: number;
-  totalCostUsd: number;
-  description: string;
-}
-
-export interface AwsBudgetStatus {
-  pilotBudgetLimitUsd: number;
-  currentSpendUsd: number;
-  remainingCreditsUsd: number;
-  percentUtilized: number;
-  currentAlertLevel: 'NOMINAL' | 'WARMUP_10' | 'CHECKPOINT_25' | 'MIDPOINT_50' | 'WARNING_75' | 'CIRCUIT_BREAKER_100';
-  circuitBreakerActive: boolean;
-  region: string;
-  profile: string;
-  awsAccountId: string;
-  lastUpdated: string;
-  services: Record<string, AwsServiceCost>;
-  recentCostEvents: Array<{
-    timestamp: string;
-    event: string;
-    costImpactUsd: number;
-    runningTotalUsd: number;
-  }>;
-}
