@@ -109,16 +109,16 @@ export default function RootLayout({
               </nav>
 
               {/* Tablet: condensed navigation */}
-              <nav className="lg:hidden flex items-center gap-1">
-                {NAV_LINKS.slice(0, 3).map((link) => (
+              <nav className="hidden sm:flex lg:hidden items-center gap-1">
+                {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`p-2 rounded-md text-xs font-semibold flex items-center gap-1 transition-colors ${link.className}`}
+                    className={`px-2.5 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1 transition-colors ${link.className}`}
                     title={link.label}
                   >
                     {link.icon}
-                    <span className="hidden sm:inline">{link.label}</span>
+                    <span>{link.label}</span>
                   </Link>
                 ))}
               </nav>
@@ -131,16 +131,16 @@ export default function RootLayout({
             </div>
           </div>
 
-          {/* Mobile bottom nav bar */}
-          <nav className="lg:hidden flex border-t border-slate-800 overflow-x-auto">
+          {/* Mobile navigation bar */}
+          <nav className="sm:hidden flex border-t border-slate-800/80 bg-slate-900/90 backdrop-blur px-1 py-1 overflow-x-auto justify-around">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex-1 min-w-[60px] flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-semibold transition-colors ${link.className}`}
+                className={`flex-1 min-w-[56px] flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 text-[10px] font-medium transition-colors rounded ${link.className}`}
               >
                 {link.icon}
-                <span className="truncate max-w-[56px] text-center leading-tight">
+                <span className="text-center leading-tight text-[9px] whitespace-nowrap">
                   {link.label}
                 </span>
               </Link>
