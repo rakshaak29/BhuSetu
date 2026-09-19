@@ -31,7 +31,6 @@ export default function DemoPage() {
 
       switch (stepNum) {
         case 1: {
-          // Step 1: Reference Lookup (BHS-2M7D-9KQX)
           const res = await fetch("/api/v1/verify/reference", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -42,7 +41,6 @@ export default function DemoPage() {
         }
 
         case 2: {
-          // Step 2: Upload Original Document -> Hash Match
           const res = await fetch("/api/v1/verify/document", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -53,7 +51,6 @@ export default function DemoPage() {
         }
 
         case 3: {
-          // Step 3: Upload 1-Character Tampered Document -> Mismatch
           const res = await fetch("/api/v1/verify/document", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -64,7 +61,6 @@ export default function DemoPage() {
         }
 
         case 4: {
-          // Step 4: Registration Maker Submits Mutation Event
           const res = await fetch("/api/v1/evidence", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -82,13 +78,12 @@ export default function DemoPage() {
         }
 
         case 5: {
-          // Step 5: Attempt Maker Self-Approval -> Expect HTTP 403 Server Violation
           const pendingEvtId = stepResults[4]?.event?.eventId || "evt-041-issue";
           const res = await fetch(`/api/v1/evidence/${pendingEvtId}/approve`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              actorId: "user-reg-maker-01", // Maker attempting self approval!
+              actorId: "user-reg-maker-01",
               approvalReason: "Self approval attempt"
             })
           });
@@ -98,13 +93,12 @@ export default function DemoPage() {
         }
 
         case 6: {
-          // Step 6: Distinct Revenue Checker Approves -> Ledger Commit
           const pendingEvtId = stepResults[4]?.event?.eventId || "evt-041-issue";
           const res = await fetch(`/api/v1/evidence/${pendingEvtId}/approve`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              actorId: "user-rev-checker-01", // Distinct checker!
+              actorId: "user-rev-checker-01",
               approvalReason: "Verified mutation deed and approved for pilot ledger commit"
             })
           });
@@ -113,7 +107,6 @@ export default function DemoPage() {
         }
 
         case 7: {
-          // Step 7: Dispute Hold Flagged -> Public Verification changes to DISPUTED
           const res = await fetch("/api/v1/parcels/PCL-AP-GNT-041/disputes", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -126,7 +119,6 @@ export default function DemoPage() {
           });
           const disputeRes = await res.json();
 
-          // Fetch public verification to confirm status changed to DISPUTED
           const verifyRes = await fetch("/api/v1/verify/reference", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -138,7 +130,6 @@ export default function DemoPage() {
         }
 
         case 8: {
-          // Step 8: Export Complete Audit Trail
           const res = await fetch("/api/v1/audit/export");
           resData = await res.json();
           break;
@@ -168,13 +159,13 @@ export default function DemoPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
       {/* Header */}
-      <div className="bg-slate-900 text-white rounded-2xl p-6 border border-slate-800 space-y-3">
-        <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+      <div className="bg-carbon-primary text-white rounded-2xl p-6 border border-slate-800 space-y-3">
+        <div className="flex items-center gap-2 text-terracotta text-xs font-bold uppercase tracking-wider">
           <Play className="w-4 h-4" />
           Interactive Pilot Evaluation Runner
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold">BhuSetu 8-Step Pilot Demo Script</h1>
-        <p className="text-sm text-slate-300">
+        <p className="text-xs text-slate-300">
           Executes the complete pilot evaluation script from Section 4 of <code className="text-amber-300">MOST_IMPORTANT_FEATURES_PAGE.md</code>.
         </p>
       </div>
@@ -189,34 +180,34 @@ export default function DemoPage() {
               stepResults[s.num]
                 ? "bg-emerald-50 border-emerald-300 text-emerald-900"
                 : currentStep === s.num
-                ? "bg-amber-50 border-amber-400 text-amber-950 font-bold shadow"
-                : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                ? "bg-terracotta-light border-terracotta text-carbon-primary font-bold shadow-sm"
+                : "bg-white border-parchment-border text-carbon-muted hover:border-carbon-muted"
             }`}
           >
             <div className="flex items-center justify-between font-bold mb-1">
               <span>Step {s.num}</span>
               {stepResults[s.num] && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
             </div>
-            <div className="font-semibold text-slate-900 text-[11px]">{s.title}</div>
+            <div className="font-semibold text-carbon-primary text-[11px]">{s.title}</div>
           </div>
         ))}
       </div>
 
       {/* Current Step Execution Box */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6">
-        <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+      <div className="parchment-card rounded-2xl border border-parchment-border p-6 sm:p-8 space-y-6">
+        <div className="flex justify-between items-center border-b border-parchment-border pb-4">
           <div>
-            <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">Current Execution Step</span>
-            <h2 className="text-xl font-bold text-slate-900">
+            <span className="text-xs font-bold text-terracotta uppercase tracking-wider">Current Execution Step</span>
+            <h2 className="text-xl font-bold text-carbon-primary">
               Step {currentStep}: {stepsInfo[currentStep - 1].title}
             </h2>
-            <p className="text-xs text-slate-600">{stepsInfo[currentStep - 1].desc}</p>
+            <p className="text-xs text-carbon-muted">{stepsInfo[currentStep - 1].desc}</p>
           </div>
 
           <button
             onClick={() => executeStep(currentStep)}
             disabled={loading}
-            className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-colors shrink-0"
+            className="px-6 py-2.5 bg-terracotta hover:bg-terracotta-hover text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-colors shrink-0 shadow-sm"
           >
             {loading ? "Running Step..." : "Execute Step"}
           </button>
@@ -225,7 +216,7 @@ export default function DemoPage() {
         {/* Live Step Output Inspection */}
         {stepResults[currentStep] && (
           <div className="space-y-4">
-            <h3 className="font-bold text-slate-900 text-xs uppercase tracking-wider text-slate-500">
+            <h3 className="font-bold text-carbon-primary text-xs uppercase tracking-wider text-carbon-muted">
               Live System Response Inspection
             </h3>
 
@@ -238,11 +229,11 @@ export default function DemoPage() {
 
       {/* All Executed Results Summary */}
       {Object.keys(stepResults).length > 0 && (
-        <div className="bg-slate-100 rounded-2xl border border-slate-200 p-6 space-y-4">
-          <h3 className="font-bold text-slate-900 text-sm">Executed Step Verification Log</h3>
+        <div className="parchment-well rounded-2xl border border-parchment-border p-6 space-y-4">
+          <h3 className="font-bold text-carbon-primary text-sm">Executed Step Verification Log</h3>
           <div className="space-y-2 text-xs font-mono">
             {Object.entries(stepResults).map(([num, data]) => (
-              <div key={num} className="bg-white p-3 rounded-lg border border-slate-200 flex justify-between items-center">
+              <div key={num} className="bg-white p-3 rounded-lg border border-parchment-border flex justify-between items-center">
                 <span>Step {num}: {stepsInfo[Number(num) - 1].title}</span>
                 <span className="font-bold text-emerald-700">COMPLETED ✓</span>
               </div>

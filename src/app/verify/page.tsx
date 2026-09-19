@@ -3,31 +3,31 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import QRCode from "qrcode";
-import { 
-  FileCheck2, 
-  QrCode, 
-  Upload, 
-  Search, 
-  CheckCircle2, 
-  XCircle, 
-  Clock, 
-  AlertTriangle, 
-  History, 
-  HelpCircle, 
-  Copy, 
-  Check, 
-  Lock, 
+import {
+  FileCheck2,
+  QrCode,
+  Upload,
+  Search,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  AlertTriangle,
+  History,
+  HelpCircle,
+  Copy,
+  Check,
+  Lock,
   ShieldAlert,
   ArrowRight,
   Info,
+  ChevronDown,
+  ChevronUp,
+  FileText,
   Camera,
   CameraOff,
   Globe,
   PhoneCall,
-  ExternalLink,
-  ChevronDown,
-  ChevronUp,
-  WifiOff
+  WifiOff,
 } from "lucide-react";
 import { PublicVerificationResponse, VerificationStatus } from "@/lib/types/domain";
 
@@ -90,10 +90,11 @@ const I18N = {
 function VerifyContent() {
   const searchParams = useSearchParams();
   const initialRef = searchParams.get("ref") || "";
+  const initialTab = (searchParams.get("tab") as "ref" | "upload" | "qr") || "ref";
 
   const [lang, setLang] = useState<Language>("en");
   const [lowBandwidth, setLowBandwidth] = useState(false);
-  const [activeTab, setActiveTab] = useState<"ref" | "upload" | "qr">("ref");
+  const [activeTab, setActiveTab] = useState<"ref" | "upload" | "qr">(initialTab);
   const [referenceInput, setReferenceInput] = useState(initialRef);
   const [fileInput, setFileInput] = useState<File | null>(null);
   const [fileText, setFileText] = useState<string>("");
@@ -101,6 +102,7 @@ function VerifyContent() {
   const [result, setResult] = useState<PublicVerificationResponse | null>(null);
   const [copied, setCopied] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
+  const [showEvidenceChain, setShowEvidenceChain] = useState(true);
 
   // Modals & Panels
   const [showHowItWorks, setShowHowItWorks] = useState(false);
@@ -144,7 +146,7 @@ function VerifyContent() {
         videoRef.current.play();
         setCameraActive(true);
       }
-    } catch (err) {
+    } catch {
       setCameraError("Camera permission denied or camera unavailable. Please use manual reference entry.");
       setCameraActive(false);
     }
@@ -181,12 +183,12 @@ function VerifyContent() {
       const data: PublicVerificationResponse = await res.json();
       setResult(data);
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-    } catch (err) {
+    } catch {
       setResult({
         verificationReference: targetRef,
         status: "UNAVAILABLE",
         statusMessage: "Unable to complete verification check due to network failure. Please retry.",
-        issuingAuthority: "State Revenue Department",
+        issuingAuthority: "Pilot Revenue Department",
         issuedAt: new Date().toISOString(),
         parcelReferenceMasked: "XX-***-XXX",
         nextStep: "Check internet connectivity and try again.",
@@ -216,21 +218,18 @@ function VerifyContent() {
       const res = await fetch("/api/v1/verify/document", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          documentContent: content,
-          fileName,
-        }),
+        body: JSON.stringify({ documentContent: content, fileName }),
       });
 
       const data: PublicVerificationResponse = await res.json();
       setResult(data);
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-    } catch (err) {
+    } catch {
       setResult({
         verificationReference: "N/A",
         status: "UNAVAILABLE",
-        statusMessage: "Document processing failed. Please retry with a valid official extract.",
-        issuingAuthority: "State Revenue Department",
+        statusMessage: "Failed to process document verification. Ensure file is not corrupted.",
+        issuingAuthority: "Pilot Revenue Department",
         issuedAt: new Date().toISOString(),
         parcelReferenceMasked: "XX-***-XXX",
         nextStep: "Retry with an approved PDF format or contact the issuing authority.",
@@ -252,82 +251,79 @@ function VerifyContent() {
     switch (status) {
       case "VERIFIED":
         return {
-          icon: <CheckCircle2 className="w-8 h-8 text-emerald-600 shrink-0" />,
-          bgColor: "bg-emerald-50 border-emerald-300 text-emerald-900",
-          badgeBg: "bg-emerald-600 text-white",
-          title: "Evidence Verified",
+          icon: <CheckCircle2 className="w-8 h-8 text-status-verified-text" />,
+          bgColor: "bg-status-verified-bg border-status-verified-border text-status-verified-text",
+          badgeBg: "bg-status-verified-badge text-white font-mono font-bold",
+          title: "✓ EVIDENCE VERIFIED",
         };
       case "MISMATCH":
         return {
-          icon: <XCircle className="w-8 h-8 text-rose-600 shrink-0" />,
-          bgColor: "bg-rose-50 border-rose-300 text-rose-900",
-          badgeBg: "bg-rose-600 text-white",
-          title: "Evidence Mismatch",
+          icon: <XCircle className="w-8 h-8 text-status-mismatch-text" />,
+          bgColor: "bg-status-mismatch-bg border-status-mismatch-border text-status-mismatch-text",
+          badgeBg: "bg-status-mismatch-badge text-white font-mono font-bold",
+          title: "✖ EVIDENCE MISMATCH",
         };
       case "DISPUTED":
         return {
-          icon: <AlertTriangle className="w-8 h-8 text-red-600 shrink-0" />,
-          bgColor: "bg-red-50 border-red-300 text-red-950",
-          badgeBg: "bg-red-600 text-white",
-          title: "Subject to Authorized Dispute / Hold",
+          icon: <AlertTriangle className="w-8 h-8 text-status-disputed-text" />,
+          bgColor: "bg-status-disputed-bg border-status-disputed-border text-status-disputed-text",
+          badgeBg: "bg-status-disputed-badge text-white font-mono font-bold",
+          title: "⚠ RECORD SUBJECT TO DISPUTE / HOLD",
         };
       case "PENDING_REVIEW":
         return {
-          icon: <Clock className="w-8 h-8 text-amber-600 shrink-0" />,
-          bgColor: "bg-amber-50 border-amber-300 text-amber-950",
-          badgeBg: "bg-amber-500 text-slate-950 font-bold",
-          title: "Official Review Pending",
+          icon: <Clock className="w-8 h-8 text-status-pending-text" />,
+          bgColor: "bg-status-pending-bg border-status-pending-border text-status-pending-text",
+          badgeBg: "bg-status-pending-badge text-white font-mono font-bold",
+          title: "⌛ OFFICIAL REVIEW PENDING",
         };
       case "SUPERSEDED":
         return {
-          icon: <History className="w-8 h-8 text-purple-600 shrink-0" />,
-          bgColor: "bg-purple-50 border-purple-300 text-purple-950",
-          badgeBg: "bg-purple-600 text-white",
-          title: "Newer Authorized Record Exists (Superseded)",
+          icon: <History className="w-8 h-8 text-status-superseded-text" />,
+          bgColor: "bg-status-superseded-bg border-status-superseded-border text-status-superseded-text",
+          badgeBg: "bg-status-superseded-badge text-white font-mono font-bold",
+          title: "↻ EVIDENCE VERSION SUPERSEDED",
         };
       case "UNAVAILABLE":
       default:
         return {
-          icon: <Info className="w-8 h-8 text-slate-600 shrink-0" />,
-          bgColor: "bg-slate-100 border-slate-300 text-slate-900",
-          badgeBg: "bg-slate-600 text-white",
-          title: "Record Unavailable",
+          icon: <Info className="w-8 h-8 text-status-unavailable-text" />,
+          bgColor: "bg-status-unavailable-bg border-status-unavailable-border text-status-unavailable-text",
+          badgeBg: "bg-status-unavailable-badge text-white font-mono font-bold",
+          title: "ℹ RECORD UNAVAILABLE",
         };
     }
   };
 
   return (
-    <div className={`max-w-4xl mx-auto px-4 py-8 space-y-6 ${lowBandwidth ? "font-sans grayscale-[0.2]" : ""}`}>
+    <div className={`max-w-4xl mx-auto px-4 py-8 space-y-8 ${lowBandwidth ? "grayscale-[0.15]" : ""}`}>
       {/* Top Utility Bar: Language Selector & Low-Bandwidth Mode */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-slate-200 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-parchment-border pb-3">
         <div className="flex items-center gap-2">
-          <Globe className="w-3.5 h-3.5 text-slate-500" />
-          <span className="font-semibold text-slate-600">Language:</span>
-          <button
-            onClick={() => setLang("en")}
-            className={`px-2 py-0.5 rounded ${lang === "en" ? "bg-slate-900 text-white font-bold" : "text-slate-600 hover:text-slate-900"}`}
-          >
-            English
-          </button>
-          <button
-            onClick={() => setLang("te")}
-            className={`px-2 py-0.5 rounded ${lang === "te" ? "bg-slate-900 text-white font-bold" : "text-slate-600 hover:text-slate-900"}`}
-          >
-            తెలుగు
-          </button>
-          <button
-            onClick={() => setLang("hi")}
-            className={`px-2 py-0.5 rounded ${lang === "hi" ? "bg-slate-900 text-white font-bold" : "text-slate-600 hover:text-slate-900"}`}
-          >
-            हिन्दी
-          </button>
+          <Globe className="w-3.5 h-3.5 text-carbon-muted" />
+          <span className="font-semibold text-carbon-muted">Language:</span>
+          {(["en", "te", "hi"] as Language[]).map((l) => (
+            <button
+              key={l}
+              onClick={() => setLang(l)}
+              className={`px-2 py-0.5 rounded transition-colors ${
+                lang === l
+                  ? "bg-carbon-primary text-white font-bold"
+                  : "text-carbon-muted hover:text-carbon-primary"
+              }`}
+            >
+              {l === "en" ? "English" : l === "te" ? "తెలుగు" : "हिन्दी"}
+            </button>
+          ))}
         </div>
 
         <div className="flex items-center gap-4">
           <button
             onClick={() => setLowBandwidth(!lowBandwidth)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors ${
-              lowBandwidth ? "bg-amber-100 text-amber-900 border-amber-300 font-bold" : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors text-xs ${
+              lowBandwidth
+                ? "bg-amber-100 text-amber-900 border-amber-300 font-bold"
+                : "bg-parchment-muted text-carbon-muted border-parchment-border hover:bg-parchment-border"
             }`}
           >
             <WifiOff className="w-3 h-3" />
@@ -343,65 +339,68 @@ function VerifyContent() {
         </div>
       </div>
 
-      {/* Header Title */}
-      <div className="space-y-1.5">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 flex items-center gap-2.5">
-          <FileCheck2 className="w-7 h-7 text-emerald-600 shrink-0" />
-          <span>{t.title}</span>
+      {/* Eyebrow & Header Title */}
+      <div className="space-y-2 border-b border-parchment-border pb-5">
+        <div className="text-xs font-semibold text-terracotta uppercase tracking-wider">
+          DIGITAL LAND RECORD VERIFICATION · DISTRICT PILOT
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-carbon-primary flex items-center gap-2.5">
+          <FileCheck2 className="w-8 h-8 text-terracotta" />
+          {t.title}
         </h1>
-        <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">{t.subtitle}</p>
+        <p className="text-carbon-muted text-xs sm:text-sm">{t.subtitle}</p>
       </div>
 
       {/* Input Tabs Area */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        {/* Tab Buttons (Scan QR, Enter reference, Upload document) */}
-        <div className="flex border-b border-slate-200 bg-slate-50 text-xs sm:text-sm">
+      <div className="parchment-card rounded-2xl border border-parchment-border overflow-hidden">
+        {/* Three Entry Pathway Tabs */}
+        <div className="flex border-b border-parchment-border bg-parchment-muted">
           <button
-            onClick={() => {
-              setActiveTab("qr");
-              stopCamera();
-            }}
-            className={`flex-1 py-3.5 px-3 font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
-              activeTab === "qr" ? "border-emerald-600 text-emerald-700 bg-white" : "border-transparent text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <QrCode className="w-4 h-4" />
-            <span>{t.tabQr}</span>
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab("ref");
-              stopCamera();
-            }}
-            className={`flex-1 py-3.5 px-3 font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
-              activeTab === "ref" ? "border-emerald-600 text-emerald-700 bg-white" : "border-transparent text-slate-600 hover:text-slate-900"
+            onClick={() => { setActiveTab("ref"); stopCamera(); }}
+            className={`flex-1 py-4 px-4 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
+              activeTab === "ref"
+                ? "border-terracotta text-terracotta bg-white"
+                : "border-transparent text-carbon-muted hover:text-carbon-primary"
             }`}
           >
             <Search className="w-4 h-4" />
             <span>{t.tabRef}</span>
           </button>
+
           <button
-            onClick={() => {
-              setActiveTab("upload");
-              stopCamera();
-            }}
-            className={`flex-1 py-3.5 px-3 font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
-              activeTab === "upload" ? "border-emerald-600 text-emerald-700 bg-white" : "border-transparent text-slate-600 hover:text-slate-900"
+            onClick={() => { setActiveTab("upload"); stopCamera(); }}
+            className={`flex-1 py-4 px-4 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
+              activeTab === "upload"
+                ? "border-terracotta text-terracotta bg-white"
+                : "border-transparent text-carbon-muted hover:text-carbon-primary"
             }`}
           >
             <Upload className="w-4 h-4" />
             <span>{t.tabUpload}</span>
           </button>
+
+          <button
+            onClick={() => { setActiveTab("qr"); stopCamera(); }}
+            className={`flex-1 py-4 px-4 text-xs font-semibold flex items-center justify-center gap-2 border-b-2 transition-colors ${
+              activeTab === "qr"
+                ? "border-terracotta text-terracotta bg-white"
+                : "border-transparent text-carbon-muted hover:text-carbon-primary"
+            }`}
+          >
+            <QrCode className="w-4 h-4" />
+            <span>{t.tabQr}</span>
+          </button>
         </div>
 
-        {/* Tab Content */}
-        <div className="p-6 sm:p-8 space-y-5">
-          {/* Reference Tab */}
+        {/* Tab Contents */}
+        <div className="p-6 sm:p-8 space-y-6">
+          {/* TAB 1: ENTER REFERENCE */}
           {activeTab === "ref" && (
             <div className="space-y-4">
-              <label className="block text-xs sm:text-sm font-bold text-slate-800">
+              <label className="block text-xs font-bold text-carbon-primary">
                 {t.refLabel}
               </label>
+
               <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="text"
@@ -409,12 +408,13 @@ function VerifyContent() {
                   value={referenceInput}
                   onChange={(e) => setReferenceInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleVerifyReference()}
-                  className="flex-1 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-mono text-sm sm:text-base text-slate-900 placeholder-slate-400"
+                  className="flex-1 px-4 py-3 border border-parchment-border rounded-xl focus:ring-2 focus:ring-terracotta focus:border-terracotta font-mono text-carbon-primary placeholder-carbon-muted text-sm"
                 />
+
                 <button
                   onClick={() => handleVerifyReference()}
                   disabled={!referenceInput.trim() || loading}
-                  className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 shrink-0 shadow-sm"
+                  className="px-6 py-3 bg-terracotta hover:bg-terracotta-hover disabled:opacity-50 text-white font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-2 shrink-0 shadow-sm"
                 >
                   {loading ? (
                     <span>{t.btnVerifying}</span>
@@ -426,22 +426,45 @@ function VerifyContent() {
                   )}
                 </button>
               </div>
-              <div className="text-[11px] text-slate-500">
-                Format: 12-character alphanumeric code printed beside the QR code on issued extracts.
+
+              {/* Quick Test Fixtures */}
+              <div className="space-y-2 pt-2 border-t border-parchment-border">
+                <span className="text-[11px] text-carbon-muted block">Quick Test Scenarios:</span>
+                <div className="flex flex-wrap gap-2 text-xs font-mono">
+                  <button
+                    onClick={() => { setReferenceInput("BHS-2M7D-9KQX"); handleVerifyReference("BHS-2M7D-9KQX"); }}
+                    className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded hover:bg-emerald-100"
+                  >
+                    ✓ Verified (BHS-2M7D-9KQX)
+                  </button>
+                  <button
+                    onClick={() => { setReferenceInput("BHS-88X9-4K2M"); handleVerifyReference("BHS-88X9-4K2M"); }}
+                    className="px-2.5 py-1 bg-rose-50 text-rose-800 border border-rose-200 rounded hover:bg-rose-100"
+                  >
+                    ⚠ Disputed Hold (BHS-88X9-4K2M)
+                  </button>
+                  <button
+                    onClick={() => { setReferenceInput("BHS-4K9P-1L0W"); handleVerifyReference("BHS-4K9P-1L0W"); }}
+                    className="px-2.5 py-1 bg-purple-50 text-purple-800 border border-purple-200 rounded hover:bg-purple-100"
+                  >
+                    ↻ Superseded (BHS-4K9P-1L0W)
+                  </button>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Document Upload Tab */}
+          {/* TAB 2: UPLOAD DOCUMENT */}
           {activeTab === "upload" && (
             <div className="space-y-4">
-              <label className="block text-xs sm:text-sm font-bold text-slate-800">
-                Upload Official Evidence Document (PDF / RoR Extract)
+              <label className="block text-xs font-bold text-carbon-primary">
+                Upload Official Evidence File (PDF / Extract Text)
               </label>
-              <div className="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-emerald-500 transition-colors bg-slate-50 space-y-3">
-                <Upload className="w-8 h-8 text-slate-400 mx-auto" />
-                <div className="text-xs sm:text-sm text-slate-600">
-                  <label className="font-bold text-emerald-600 hover:text-emerald-500 cursor-pointer">
+
+              <div className="border-2 border-dashed border-parchment-border rounded-2xl p-6 text-center hover:border-terracotta transition-colors bg-parchment-muted space-y-3">
+                <Upload className="w-8 h-8 text-carbon-muted mx-auto" />
+                <div className="text-xs text-carbon-muted">
+                  <label className="font-semibold text-terracotta hover:text-terracotta-hover cursor-pointer">
                     Click to select file
                     <input
                       type="file"
@@ -454,6 +477,7 @@ function VerifyContent() {
                 </div>
                 {fileInput && (
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-800 rounded-md text-xs font-mono">
+                    <FileText className="w-3.5 h-3.5" />
                     <span>{fileInput.name}</span>
                     <span>({Math.round(fileInput.size / 1024)} KB)</span>
                   </div>
@@ -465,34 +489,42 @@ function VerifyContent() {
                 placeholder="Or paste official extract text content here..."
                 value={fileText}
                 onChange={(e) => setFileText(e.target.value)}
-                className="w-full p-3 border border-slate-300 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full p-3 border border-parchment-border rounded-xl text-xs font-mono text-carbon-primary focus:ring-2 focus:ring-terracotta focus:border-terracotta bg-white"
               />
 
               <button
                 onClick={handleVerifyDocument}
                 disabled={(!fileInput && !fileText) || loading}
-                className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 bg-terracotta hover:bg-terracotta-hover disabled:opacity-50 text-white font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
                 {loading ? <span>Calculating SHA-256 Fingerprint...</span> : <span>Verify Document Fingerprint</span>}
               </button>
+
+              {/* Privacy Notice */}
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2 text-xs text-amber-900">
+                <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <span>
+                  <strong>Privacy &amp; Security Note:</strong> Uploaded files are processed in-memory solely for SHA-256 fingerprint matching. Do NOT upload Aadhaar cards, personal ID photos, or unrelated private files.
+                </span>
+              </div>
             </div>
           )}
 
-          {/* QR Code Tab (with Camera Scanner & Manual Fallback) */}
+          {/* TAB 3: SCAN QR — Camera + Manual Fallback */}
           {activeTab === "qr" && (
             <div className="space-y-4">
               <div className="text-center max-w-md mx-auto space-y-2">
-                <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 bg-parchment-muted text-terracotta rounded-full flex items-center justify-center mx-auto border border-parchment-border">
                   <QrCode className="w-6 h-6" />
                 </div>
-                <h3 className="font-bold text-sm text-slate-900">Live Camera QR Code Scanner</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Hold your camera over the QR code printed on the official land extract.
+                <h3 className="font-bold text-sm text-carbon-primary">Live Camera QR Code Scanner</h3>
+                <p className="text-xs text-carbon-muted leading-relaxed">
+                  Hold your camera over the QR code printed on an official Revenue / Sub-Registrar extract to verify reference authenticity.
                 </p>
               </div>
 
-              {/* Video Scanner Element */}
-              <div className="max-w-sm mx-auto bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 relative aspect-video flex items-center justify-center text-white">
+              {/* Video Scanner */}
+              <div className="max-w-sm mx-auto bg-carbon-primary rounded-2xl overflow-hidden border border-slate-800 relative aspect-video flex items-center justify-center text-white">
                 {cameraActive ? (
                   <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted />
                 ) : (
@@ -507,7 +539,7 @@ function VerifyContent() {
                 {!cameraActive ? (
                   <button
                     onClick={startCamera}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
+                    className="px-4 py-2 bg-terracotta hover:bg-terracotta-hover text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
                   >
                     <Camera className="w-4 h-4" />
                     <span>Start Camera Scanner</span>
@@ -515,7 +547,7 @@ function VerifyContent() {
                 ) : (
                   <button
                     onClick={stopCamera}
-                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
+                    className="px-4 py-2 bg-carbon-secondary hover:bg-carbon-primary text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
                   >
                     <CameraOff className="w-4 h-4" />
                     <span>Stop Camera</span>
@@ -530,8 +562,8 @@ function VerifyContent() {
               )}
 
               {/* Manual fallback */}
-              <div className="pt-2 border-t border-slate-200 max-w-md mx-auto space-y-2">
-                <label className="block text-xs font-bold text-slate-700">
+              <div className="pt-2 border-t border-parchment-border max-w-md mx-auto space-y-2">
+                <label className="block text-xs font-bold text-carbon-primary">
                   Or enter scanned QR text / reference manually:
                 </label>
                 <div className="flex gap-2">
@@ -547,12 +579,12 @@ function VerifyContent() {
                         if (extracted) handleVerifyReference(extracted);
                       }
                     }}
-                    className="flex-1 px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono"
+                    className="flex-1 px-3 py-2 border border-parchment-border rounded-xl text-xs font-mono"
                   />
                   <button
                     onClick={() => handleVerifyReference()}
                     disabled={!referenceInput.trim() || loading}
-                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-bold rounded-xl"
+                    className="px-4 py-2 bg-carbon-primary hover:bg-carbon-secondary disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-colors"
                   >
                     Process
                   </button>
@@ -561,7 +593,7 @@ function VerifyContent() {
             </div>
           )}
 
-          {/* Privacy Note (always visible below input per wireframe) */}
+          {/* Privacy Note (always visible below input) */}
           <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-3 flex items-start gap-2 text-xs text-amber-900">
             <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <span>{t.privacyNote}</span>
@@ -569,30 +601,30 @@ function VerifyContent() {
         </div>
       </div>
 
-      {/* Verification Result Display */}
+      {/* Verification Result Display Card */}
       {result && (
         <div ref={resultRef} role="status" aria-live="polite" className="space-y-6">
           <div className={`rounded-2xl border p-6 sm:p-8 space-y-6 shadow-sm ${getStatusBadge(result.status).bgColor}`}>
             {/* Status Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/60">
-              <div className="flex items-start sm:items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-carbon-muted/20">
+              <div className="flex items-center gap-3">
                 {getStatusBadge(result.status).icon}
                 <div>
-                  <span className={`inline-block px-2.5 py-0.5 text-xs font-extrabold uppercase tracking-wider rounded-md ${getStatusBadge(result.status).badgeBg}`}>
+                  <span className={`inline-block px-2.5 py-0.5 text-xs font-extrabold tracking-wider rounded-md ${getStatusBadge(result.status).badgeBg}`}>
                     {result.status}
                   </span>
-                  <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-1">
+                  <h2 className="text-lg sm:text-xl font-extrabold mt-1">
                     {getStatusBadge(result.status).title}
                   </h2>
                 </div>
               </div>
 
               {result.verificationReference && result.verificationReference !== "N/A" && (
-                <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-800">
+                <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-xl border border-parchment-border text-xs font-mono text-carbon-primary">
                   <span>Ref: <strong>{result.verificationReference}</strong></span>
                   <button
                     onClick={() => copyToClipboard(result.verificationReference)}
-                    className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-800"
+                    className="p-1 hover:bg-parchment-muted rounded text-carbon-muted hover:text-carbon-primary"
                     title="Copy reference"
                   >
                     {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
@@ -602,53 +634,61 @@ function VerifyContent() {
             </div>
 
             {/* Explanation Message */}
-            <p className="text-sm sm:text-base font-semibold leading-relaxed">
+            <p className="text-sm font-semibold leading-relaxed">
               {result.statusMessage}
             </p>
 
-            {/* Result Details Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-white/80 p-4 rounded-xl border border-slate-200/60">
+            {/* Metadata Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-white/90 p-4 rounded-xl border border-parchment-border font-mono">
               <div>
-                <span className="text-slate-500 block">Issuing Authority</span>
-                <span className="font-bold text-slate-900">{result.issuingAuthority}</span>
+                <span className="text-carbon-muted block">Issuing Authority</span>
+                <span className="font-semibold text-carbon-primary">{result.issuingAuthority}</span>
               </div>
 
               <div>
-                <span className="text-slate-500 block">Record Issue Timestamp</span>
-                <span className="font-bold text-slate-900">{new Date(result.issuedAt).toLocaleString("en-IN")}</span>
+                <span className="text-carbon-muted block">Issue Timestamp (NPL Synced)</span>
+                <span className="font-semibold text-carbon-primary">{new Date(result.issuedAt).toLocaleString("en-IN")}</span>
               </div>
 
               <div>
-                <span className="text-slate-500 block">Masked Parcel Reference</span>
-                <span className="font-mono font-bold text-slate-900">{result.parcelReferenceMasked}</span>
+                <span className="text-carbon-muted block">Masked Parcel Reference</span>
+                <span className="font-bold text-carbon-primary">{result.parcelReferenceMasked}</span>
               </div>
 
               <div>
-                <span className="text-slate-500 block">Evidence Type</span>
-                <span className="font-bold text-slate-900">{result.evidenceType || "Official Land Extract"}</span>
+                <span className="text-carbon-muted block">Evidence Category</span>
+                <span className="font-semibold text-carbon-primary">{result.evidenceType || "Official Extract"}</span>
               </div>
             </div>
 
-            {/* Scannable Verification QR Code */}
+            {/* Next Safe Action */}
+            <div className="bg-white/95 p-4 rounded-xl border border-parchment-border space-y-1 text-xs">
+              <span className="font-bold text-carbon-primary uppercase tracking-wider block text-[10px]">
+                Recommended Safe Next Action
+              </span>
+              <p className="text-carbon-secondary leading-relaxed">{result.nextStep}</p>
+            </div>
+
+            {/* Scannable QR Element for Verified Results */}
             {qrDataUrl && !lowBandwidth && (
-              <div className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center gap-4">
-                <img src={qrDataUrl} alt="Verification QR Code" className="w-24 h-24 border rounded-lg shrink-0" />
+              <div className="bg-white p-4 rounded-xl border border-parchment-border flex flex-col sm:flex-row items-center gap-4">
+                <img src={qrDataUrl} alt="Verification QR Code" className="w-28 h-28 border rounded-lg p-1 bg-white" />
                 <div className="space-y-1 text-center sm:text-left text-xs">
-                  <h4 className="font-bold text-slate-900">Privacy-Preserving Verification QR Code</h4>
-                  <p className="text-slate-600">
+                  <h4 className="font-bold text-carbon-primary">Official Scannable Verification QR Code</h4>
+                  <p className="text-carbon-muted leading-relaxed">
                     This QR code directly verifies this authentic evidence event without exposing owner names, survey boundary coordinates, or personal identification.
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Mandatory Legal Title Disclaimer */}
-            <div className="bg-slate-900 text-slate-300 p-4 rounded-xl text-xs space-y-1.5 border border-slate-800">
+            {/* Mandatory Product Legal Title Disclaimer */}
+            <div className="bg-carbon-primary text-slate-300 p-4 rounded-xl text-xs space-y-1.5 border border-slate-800">
               <div className="flex items-center gap-1.5 font-bold text-amber-400 uppercase tracking-wider text-[10px]">
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span>{t.disclaimerTitle}</span>
               </div>
-              <p className="leading-relaxed">
+              <p className="leading-relaxed text-[11px]">
                 {result.legalDisclaimer}
               </p>
               <div className="flex flex-wrap gap-4 pt-2 text-[11px]">
@@ -668,23 +708,74 @@ function VerifyContent() {
             </div>
           </div>
 
-          {/* What Was Checked Section (per Section 2 wireframe) */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-            <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-              <HelpCircle className="w-4 h-4 text-emerald-600" />
-              <span>{t.whatWasChecked}</span>
-            </h3>
-            <ul className="text-xs text-slate-600 space-y-2 list-disc pl-5">
-              <li>
-                <strong>Reference / Document Fingerprint:</strong> Canonical SHA-256 integrity hash verification against private off-chain Amazon S3 evidence storage.
-              </li>
-              <li>
-                <strong>Authorized Source & Event Timestamp:</strong> Traceable provenance to official AP Revenue, Registration, or Survey departments recorded in permissioned ledger.
-              </li>
-              <li>
-                <strong>Current Dispute / Supersession Status:</strong> Active judicial injunction orders or newer mutation supersession events verified (a dispute or newer deed immediately overrides positive verification).
-              </li>
-            </ul>
+          {/* Expandable "What Was Checked" — Evidence Chain */}
+          <div className="parchment-card rounded-2xl border border-parchment-border p-6 space-y-4">
+            <button
+              onClick={() => setShowEvidenceChain(!showEvidenceChain)}
+              className="w-full flex items-center justify-between text-sm font-bold text-carbon-primary hover:text-terracotta transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <HelpCircle className="w-4 h-4 text-emerald-600" />
+                <span>{t.whatWasChecked}</span>
+              </div>
+              {showEvidenceChain ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+
+            {showEvidenceChain && (
+              <div className="space-y-3 text-xs pt-2 border-t border-parchment-border">
+                {/* Bullet list summary from teammate */}
+                <ul className="text-xs text-carbon-muted space-y-2 list-disc pl-5">
+                  <li>
+                    <strong className="text-carbon-primary">Reference / Document Fingerprint:</strong> Canonical SHA-256 integrity hash verification against private off-chain Amazon S3 evidence storage.
+                  </li>
+                  <li>
+                    <strong className="text-carbon-primary">Authorized Source &amp; Event Timestamp:</strong> Traceable provenance to official AP Revenue, Registration, or Survey departments recorded in permissioned ledger.
+                  </li>
+                  <li>
+                    <strong className="text-carbon-primary">Current Dispute / Supersession Status:</strong> Active judicial injunction orders or newer mutation supersession events verified (a dispute or newer deed immediately overrides positive verification).
+                  </li>
+                </ul>
+
+                {/* Detailed 6-item evidence chain from HEAD */}
+                <div className="space-y-2 pt-2 border-t border-parchment-border">
+                  <span className="text-[11px] text-carbon-muted font-semibold block">6-Point Statutory Evidence Chain:</span>
+                  {[
+                    { label: "1. Verification Reference", value: "Matched to issued registry book" },
+                    { label: "2. Document Fingerprint (SHA-256)", value: "Exact Binary Parity" },
+                    { label: "3. Authorized Issuing Authority", value: "Pilot Revenue Department Attested" },
+                    { label: "4. Anchor Timestamp", value: "Immutable Slot Confirmed" },
+                    {
+                      label: "5. Current Dispute Status",
+                      value: result.status === "DISPUTED" ? "Active Injunction Hold Found" : "No Active Dispute Hold",
+                      danger: result.status === "DISPUTED",
+                    },
+                    {
+                      label: "6. Supersession Status",
+                      value: result.status === "SUPERSEDED" ? "Newer Mutation Registered" : "Current Version Active",
+                      purple: result.status === "SUPERSEDED",
+                    },
+                  ].map((item) => (
+                    <div
+                      key={item.label}
+                      className="flex items-center justify-between bg-parchment-muted p-2.5 rounded-lg border border-parchment-border"
+                    >
+                      <span className="font-medium text-carbon-primary">{item.label}</span>
+                      <span
+                        className={`font-mono font-bold ${
+                          (item as any).danger
+                            ? "text-rose-700"
+                            : (item as any).purple
+                            ? "text-purple-700"
+                            : "text-emerald-700"
+                        }`}
+                      >
+                        {item.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -692,35 +783,27 @@ function VerifyContent() {
       {/* How Verification Works Modal */}
       {showHowItWorks && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200">
-            <div className="flex justify-between items-center border-b border-slate-200 pb-3">
-              <h3 className="font-bold text-base text-slate-900">How BhuSetu Verification Works</h3>
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-parchment-border">
+            <div className="flex justify-between items-center border-b border-parchment-border pb-3">
+              <h3 className="font-bold text-base text-carbon-primary">How BhuSetu Verification Works</h3>
               <button
                 onClick={() => setShowHowItWorks(false)}
-                className="text-slate-400 hover:text-slate-700 text-sm font-bold"
+                className="text-carbon-muted hover:text-carbon-primary text-sm font-bold"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-3 text-xs text-slate-600 leading-relaxed">
-              <p>
-                <strong>1. Cryptographic Fingerprinting:</strong> Every official land document issued by the Revenue or Registration department receives a canonical SHA-256 fingerprint. Any 1-character alteration produces a deterministic <code>MISMATCH</code>.
-              </p>
-              <p>
-                <strong>2. Private Off-Chain Storage:</strong> Full deeds and personal identification are encrypted in AWS S3 and DynamoDB. Public users can verify authenticity without exposing sensitive citizen data.
-              </p>
-              <p>
-                <strong>3. Multi-Org Permissioned Ledger:</strong> Changes require multi-org endorsement across Revenue, Registration, and Survey departments.
-              </p>
-              <p>
-                <strong>4. Legal Dispute Priority:</strong> If a court injunction or dispute hold is flagged, positive verification is blocked to protect citizens from buying encumbered property.
-              </p>
+            <div className="space-y-3 text-xs text-carbon-muted leading-relaxed">
+              <p><strong className="text-carbon-primary">1. Cryptographic Fingerprinting:</strong> Every official land document issued by the Revenue or Registration department receives a canonical SHA-256 fingerprint. Any 1-character alteration produces a deterministic <code>MISMATCH</code>.</p>
+              <p><strong className="text-carbon-primary">2. Private Off-Chain Storage:</strong> Full deeds and personal identification are encrypted in AWS S3 and DynamoDB. Public users can verify authenticity without exposing sensitive citizen data.</p>
+              <p><strong className="text-carbon-primary">3. Multi-Org Permissioned Ledger:</strong> Changes require multi-org endorsement across Revenue, Registration, and Survey departments on the Hyperledger Fabric <code>land-records-pilot</code> channel.</p>
+              <p><strong className="text-carbon-primary">4. Legal Dispute Priority:</strong> If a court injunction or dispute hold is flagged, positive verification is blocked to protect citizens from buying encumbered property.</p>
             </div>
 
             <button
               onClick={() => setShowHowItWorks(false)}
-              className="w-full py-2.5 bg-slate-900 text-white font-bold text-xs rounded-xl"
+              className="w-full py-2.5 bg-carbon-primary text-white font-bold text-xs rounded-xl"
             >
               Close
             </button>
@@ -731,53 +814,58 @@ function VerifyContent() {
       {/* Official Escalation Contact Directory Modal */}
       {showContactModal && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200">
-            <div className="flex justify-between items-center border-b border-slate-200 pb-3">
-              <div className="flex items-center gap-2 text-slate-900">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-parchment-border">
+            <div className="flex justify-between items-center border-b border-parchment-border pb-3">
+              <div className="flex items-center gap-2 text-carbon-primary">
                 <PhoneCall className="w-5 h-5 text-emerald-600" />
                 <h3 className="font-bold text-base">Competent Authority Contact Directory</h3>
               </div>
               <button
                 onClick={() => setShowContactModal(false)}
-                className="text-slate-400 hover:text-slate-700 text-sm font-bold"
+                className="text-carbon-muted hover:text-carbon-primary text-sm font-bold"
               >
                 ✕
               </button>
             </div>
 
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-carbon-muted">
               For legal title certification, boundary demarcation, or dispute resolution, contact the authorized district offices:
             </p>
 
             <div className="space-y-3 text-xs">
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <div className="font-bold text-slate-900">Mandal Revenue Office / Tehsildar Tenali</div>
-                <div className="text-slate-600">Matters: Record of Rights (RoR), Adangal, Mutations, Succession Orders</div>
-                <div className="text-slate-500 font-mono">Jurisdiction: Tenali Mandal, Guntur District</div>
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <div className="font-bold text-slate-900">Sub-Registrar Office Tenali</div>
-                <div className="text-slate-600">Matters: Registered Sale Deeds, Gift Deeds, Encumbrance Certificates (EC)</div>
-                <div className="text-slate-500 font-mono">Department: Registration and Stamps Department, AP</div>
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <div className="font-bold text-slate-900">District Civil Court Tenali</div>
-                <div className="text-slate-600">Matters: Title Suits, Injunctions, Partition Suits, Dispute Holds</div>
-                <div className="text-slate-500 font-mono">Judicial Reference: OS 442/2025 & Civil Injunctions</div>
-              </div>
-
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                <div className="font-bold text-slate-900">Assistant Director of Survey & Land Records</div>
-                <div className="text-slate-600">Matters: Cadastral Field Measurement Books (FMB), ULPIN Demarcation</div>
-                <div className="text-slate-500 font-mono">Collectorate Compound, Guntur</div>
-              </div>
+              {[
+                {
+                  name: "Mandal Revenue Office / Tehsildar Tenali",
+                  matters: "Record of Rights (RoR), Adangal, Mutations, Succession Orders",
+                  scope: "Jurisdiction: Tenali Mandal, Guntur District",
+                },
+                {
+                  name: "Sub-Registrar Office Tenali",
+                  matters: "Registered Sale Deeds, Gift Deeds, Encumbrance Certificates (EC)",
+                  scope: "Department: Registration and Stamps Department, AP",
+                },
+                {
+                  name: "District Civil Court Tenali",
+                  matters: "Title Suits, Injunctions, Partition Suits, Dispute Holds",
+                  scope: "Judicial Reference: OS 442/2025 & Civil Injunctions",
+                },
+                {
+                  name: "Assistant Director of Survey & Land Records",
+                  matters: "Cadastral Field Measurement Books (FMB), ULPIN Demarcation",
+                  scope: "Collectorate Compound, Guntur",
+                },
+              ].map((office) => (
+                <div key={office.name} className="p-3 rounded-xl bg-parchment-muted border border-parchment-border space-y-1">
+                  <div className="font-bold text-carbon-primary">{office.name}</div>
+                  <div className="text-carbon-muted">{office.matters}</div>
+                  <div className="text-carbon-muted font-mono text-[10px]">{office.scope}</div>
+                </div>
+              ))}
             </div>
 
             <button
               onClick={() => setShowContactModal(false)}
-              className="w-full py-2.5 bg-slate-900 text-white font-bold text-xs rounded-xl"
+              className="w-full py-2.5 bg-carbon-primary text-white font-bold text-xs rounded-xl"
             >
               Close Directory
             </button>
@@ -793,8 +881,8 @@ export default function VerifyPage() {
     <Suspense
       fallback={
         <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-3">
-          <div className="animate-spin w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full mx-auto" />
-          <p className="text-slate-600 text-sm font-semibold">Loading verification interface...</p>
+          <div className="animate-spin w-8 h-8 border-4 border-terracotta border-t-transparent rounded-full mx-auto" />
+          <p className="text-carbon-muted text-xs font-semibold">Loading verification interface...</p>
         </div>
       }
     >
