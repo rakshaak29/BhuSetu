@@ -15,6 +15,7 @@ import {
   saveAuditToDynamo,
   getAuditLogsFromDynamo,
   uploadEvidenceToS3,
+  isAwsCircuitOpen,
 } from '../aws/aws-client';
 
 const DEMO_DOCS: Record<string, string> = {
@@ -165,31 +166,37 @@ class DataRepository {
   // --- Parcel Methods ---
 
   public async getParcelById(parcelId: string): Promise<Parcel | null> {
-    try {
-      const fromDynamo = await getParcelFromDynamo(parcelId);
-      if (fromDynamo) return fromDynamo;
-    } catch {
-      // Fall through to memory fallback
+    if (!isAwsCircuitOpen()) {
+      try {
+        const fromDynamo = await getParcelFromDynamo(parcelId);
+        if (fromDynamo) return fromDynamo;
+      } catch {
+        // Fall through to memory fallback
+      }
     }
     return this.memoryParcels.get(parcelId) || null;
   }
 
   public async getParcelByStateId(stateParcelId: string): Promise<Parcel | null> {
-    try {
-      const fromDynamo = await getParcelByStateIdFromDynamo(stateParcelId);
-      if (fromDynamo) return fromDynamo;
-    } catch {
-      // Fall through to memory fallback
+    if (!isAwsCircuitOpen()) {
+      try {
+        const fromDynamo = await getParcelByStateIdFromDynamo(stateParcelId);
+        if (fromDynamo) return fromDynamo;
+      } catch {
+        // Fall through to memory fallback
+      }
     }
     return Array.from(this.memoryParcels.values()).find(p => p.stateParcelId === stateParcelId) || null;
   }
 
   public async getAllParcels(): Promise<Parcel[]> {
-    try {
-      const fromDynamo = await getAllParcelsFromDynamo();
-      if (fromDynamo && fromDynamo.length > 0) return fromDynamo;
-    } catch {
-      // Fall through to memory fallback
+    if (!isAwsCircuitOpen()) {
+      try {
+        const fromDynamo = await getAllParcelsFromDynamo();
+        if (fromDynamo && fromDynamo.length > 0) return fromDynamo;
+      } catch {
+        // Fall through to memory fallback
+      }
     }
     return Array.from(this.memoryParcels.values());
   }
@@ -198,32 +205,36 @@ class DataRepository {
     parcel.version = (parcel.version || 0) + 1;
     parcel.updatedAt = new Date().toISOString();
     this.memoryParcels.set(parcel.parcelId, parcel);
-    try {
-      await saveParcelToDynamo(parcel);
-    } catch (err: any) {
-      console.warn('[Repository] DynamoDB updateParcel fallback to local state:', err?.message || err);
+    if (!isAwsCircuitOpen()) {
+      saveParcelToDynamo(parcel).catch((err: any) => {
+        console.warn('[Repository] DynamoDB updateParcel fallback to local state:', err?.message || err);
+      });
     }
   }
 
   // --- Evidence Methods ---
 
   public async getEvidenceEvent(eventId: string): Promise<EvidenceEvent | null> {
-    try {
-      const fromDynamo = await getEvidenceByEventIdFromDynamo(eventId);
-      if (fromDynamo) return fromDynamo;
-    } catch {
-      // Fall through
+    if (!isAwsCircuitOpen()) {
+      try {
+        const fromDynamo = await getEvidenceByEventIdFromDynamo(eventId);
+        if (fromDynamo) return fromDynamo;
+      } catch {
+        // Fall through
+      }
     }
     return this.memoryEvidenceEvents.get(eventId) || null;
   }
 
   public async getEvidenceByReference(ref: string): Promise<EvidenceEvent | null> {
     const cleanRef = ref.trim().toUpperCase();
-    try {
-      const fromDynamo = await getEvidenceByRefFromDynamo(cleanRef);
-      if (fromDynamo) return fromDynamo;
-    } catch {
-      // Fall through
+    if (!isAwsCircuitOpen()) {
+      try {
+        const fromDynamo = await getEvidenceByRefFromDynamo(cleanRef);
+        if (fromDynamo) return fromDynamo;
+      } catch {
+        // Fall through
+      }
     }
     return Array.from(this.memoryEvidenceEvents.values()).find(
       e => e.verificationReference.toUpperCase() === cleanRef
@@ -232,11 +243,13 @@ class DataRepository {
 
   public async getEvidenceByHash(hashHex: string): Promise<EvidenceEvent | null> {
     const cleanHash = hashHex.trim().toLowerCase();
-    try {
-      const fromDynamo = await getEvidenceByHashFromDynamo(cleanHash);
-      if (fromDynamo) return fromDynamo;
-    } catch {
-      // Fall through
+    if (!isAwsCircuitOpen()) {
+      try {
+        const fromDynamo = await getEvidenceByHashFromDynamo(cleanHash);
+        if (fromDynamo) return fromDynamo;
+      } catch {
+        // Fall through
+      }
     }
     return Array.from(this.memoryEvidenceEvents.values()).find(
       e => e.sha256.toLowerCase() === cleanHash && (e.status === 'APPROVED' || e.status === 'COMMITTED')
@@ -244,11 +257,13 @@ class DataRepository {
   }
 
   public async getEventsForParcel(parcelId: string): Promise<EvidenceEvent[]> {
-    try {
-      const fromDynamo = await getEventsForParcelFromDynamo(parcelId);
-      if (fromDynamo && fromDynamo.length > 0) return fromDynamo;
-    } catch {
-      // Fall through
+    if (!isAwsCircuitOpen()) {
+      try {
+        const fromDynamo = await getEventsForParcelFromDynamo(parcelId);
+        if (fromDynamo && fromDynamo.length > 0) return fromDynamo;
+      } catch {
+        // Fall through
+      }
     }
     return Array.from(this.memoryEvidenceEvents.values())
       .filter(e => e.parcelId === parcelId)
@@ -256,11 +271,13 @@ class DataRepository {
   }
 
   public async getPendingEvents(): Promise<EvidenceEvent[]> {
-    try {
-      const fromDynamo = await getPendingEventsFromDynamo();
-      if (fromDynamo && fromDynamo.length > 0) return fromDynamo;
-    } catch {
-      // Fall through
+    if (!isAwsCircuitOpen()) {
+      try {
+        const fromDynamo = await getPendingEventsFromDynamo();
+        if (fromDynamo && fromDynamo.length > 0) return fromDynamo;
+      } catch {
+        // Fall through
+      }
     }
     return Array.from(this.memoryEvidenceEvents.values())
       .filter(e => e.status === 'PENDING')
@@ -269,10 +286,10 @@ class DataRepository {
 
   public async saveEvidenceEvent(event: EvidenceEvent): Promise<void> {
     this.memoryEvidenceEvents.set(event.eventId, event);
-    try {
-      await saveEvidenceToDynamo(event);
-    } catch (err: any) {
-      console.warn('[Repository] DynamoDB saveEvidenceEvent fallback to local state:', err?.message || err);
+    if (!isAwsCircuitOpen()) {
+      saveEvidenceToDynamo(event).catch((err: any) => {
+        console.warn('[Repository] DynamoDB saveEvidenceEvent fallback to local state:', err?.message || err);
+      });
     }
   }
 
@@ -280,10 +297,10 @@ class DataRepository {
 
   public async storeDocument(hashHex: string, content: string): Promise<void> {
     this.memoryDocuments.set(hashHex, content);
-    try {
-      await uploadEvidenceToS3(`evidence/documents/${hashHex}.enc`, content, { sha256: hashHex });
-    } catch (err: any) {
-      console.warn('[Repository] S3 storeDocument fallback to local state:', err?.message || err);
+    if (!isAwsCircuitOpen()) {
+      uploadEvidenceToS3(`evidence/documents/${hashHex}.enc`, content, { sha256: hashHex }).catch((err: any) => {
+        console.warn('[Repository] S3 storeDocument fallback to local state:', err?.message || err);
+      });
     }
   }
 
@@ -296,10 +313,10 @@ class DataRepository {
       occurredAt: new Date().toISOString()
     };
     this.memoryAuditLogs.unshift(fullEvent);
-    try {
-      await saveAuditToDynamo(fullEvent);
-    } catch (err: any) {
-      console.warn('[Repository] DynamoDB logAudit fallback to local state:', err?.message || err);
+    if (!isAwsCircuitOpen()) {
+      saveAuditToDynamo(fullEvent).catch((err: any) => {
+        console.warn('[Repository] DynamoDB logAudit fallback to local state:', err?.message || err);
+      });
     }
     return fullEvent;
   }
@@ -309,11 +326,13 @@ class DataRepository {
     actorId?: string;
     action?: string;
   }): Promise<AuditEvent[]> {
-    try {
-      const fromDynamo = await getAuditLogsFromDynamo(filters);
-      if (fromDynamo && fromDynamo.length > 0) return fromDynamo;
-    } catch {
-      // Fall through
+    if (!isAwsCircuitOpen()) {
+      try {
+        const fromDynamo = await getAuditLogsFromDynamo(filters);
+        if (fromDynamo && fromDynamo.length > 0) return fromDynamo;
+      } catch {
+        // Fall through
+      }
     }
     let logs = [...this.memoryAuditLogs];
     if (filters?.parcelId) logs = logs.filter(l => l.resourceId === filters.parcelId);
