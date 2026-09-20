@@ -114,6 +114,7 @@ function VerifyContent() {
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
   const t = I18N[lang];
@@ -158,18 +159,28 @@ function VerifyContent() {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "environment" },
       });
+      streamRef.current = stream;
+      setCameraActive(true);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
-        setCameraActive(true);
+        try {
+          await videoRef.current.play();
+        } catch (playErr) {
+          console.warn("Video play error:", playErr);
+        }
       }
-    } catch {
+    } catch (err: any) {
+      console.warn("Camera start failed:", err);
       setCameraError("Camera permission denied or camera unavailable. Please use manual reference entry.");
       setCameraActive(false);
     }
   };
 
   const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach((track) => track.stop());
@@ -177,6 +188,50 @@ function VerifyContent() {
     }
     setCameraActive(false);
   };
+
+  // Sync stream to video element whenever camera becomes active
+  useEffect(() => {
+    if (cameraActive && streamRef.current && videoRef.current) {
+      if (videoRef.current.srcObject !== streamRef.current) {
+        videoRef.current.srcObject = streamRef.current;
+      }
+      videoRef.current.play().catch(() => {});
+    }
+  }, [cameraActive]);
+
+  // Real-time Barcode / QR detector loop when camera preview is active
+  useEffect(() => {
+    let intervalId: any;
+    if (cameraActive && typeof window !== "undefined" && "BarcodeDetector" in window) {
+      try {
+        const barcodeDetector = new (window as any).BarcodeDetector({ formats: ["qr_code"] });
+        intervalId = setInterval(async () => {
+          if (videoRef.current && videoRef.current.readyState >= 2) {
+            try {
+              const barcodes = await barcodeDetector.detect(videoRef.current);
+              if (barcodes.length > 0) {
+                const rawValue = barcodes[0].rawValue;
+                if (rawValue) {
+                  const refMatch = rawValue.match(/ref=([A-Z0-9-]+)/i);
+                  const extracted = refMatch ? refMatch[1] : rawValue.trim();
+                  stopCamera();
+                  setReferenceInput(extracted);
+                  handleVerifyReference(extracted);
+                }
+              }
+            } catch {
+              // Frame dropped or detection error
+            }
+          }
+        }, 300);
+      } catch {
+        // BarcodeDetector not supported
+      }
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [cameraActive]);
 
   useEffect(() => {
     return () => {
@@ -623,8 +678,23 @@ function VerifyContent() {
 
               {/* Video Scanner */}
               <div className="max-w-sm mx-auto bg-[#1F241E] rounded-3xl overflow-hidden border border-[#363E34] relative aspect-video flex items-center justify-center text-white shadow-soft">
+                <video
+                  ref={videoRef}
+                  className={`w-full h-full object-cover ${cameraActive ? "block" : "hidden"}`}
+                  autoPlay
+                  playsInline
+                  muted
+                />
                 {cameraActive ? (
-                  <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted />
+                  <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                    <div className="w-44 h-44 border-2 border-[#8FB97C]/60 rounded-2xl relative">
+                      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white rounded-tl" />
+                      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-white rounded-tr" />
+                      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-white rounded-bl" />
+                      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-white rounded-br" />
+                      <div className="w-full h-0.5 bg-[#8FB97C] absolute top-1/2 -translate-y-1/2 animate-pulse shadow-[0_0_8px_#8FB97C]" />
+                    </div>
+                  </div>
                 ) : (
                   <div className="text-center p-4 space-y-2">
                     <Camera className="w-8 h-8 text-[#78786C] mx-auto" />
