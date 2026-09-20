@@ -36,8 +36,8 @@ type Language = "en" | "te" | "hi";
 
 const I18N = {
   en: {
-    title: "Verify Land Record Evidence",
-    subtitle: "Check an issued reference or compare an approved file against the permissioned ledger.",
+    title: "Verify Land Record",
+    subtitle: "Check if your document or reference code matches official government records.",
     tabRef: "Enter Reference",
     tabUpload: "Upload Document",
     tabQr: "Scan QR Code",
@@ -50,7 +50,7 @@ const I18N = {
     contactAuth: "Contact issuing authority",
     lowBandwidth: "Low-bandwidth mode",
     whatWasChecked: "What was checked in this verification?",
-    disclaimerTitle: "Mandatory Product Legal Disclaimer",
+    disclaimerTitle: "Important Legal Notice",
   },
   te: {
     title: "భూమి రికార్డు సాక్ష్యాల ధృవీకరణ",
@@ -344,7 +344,7 @@ function VerifyContent() {
       <div className="space-y-2.5 border-b border-[#DED8CF]/70 pb-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#5D7052]/10 border border-[#5D7052]/25 text-[#5D7052] text-[11px] font-semibold uppercase tracking-wider">
           <ShieldCheck className="w-3.5 h-3.5" />
-          DIGITAL LAND RECORD VERIFICATION · DISTRICT PILOT
+          LAND RECORD VERIFICATION
         </div>
         <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#2C2C24] flex items-center gap-3">
           <FileCheck2 className="w-8 h-8 text-[#C18C5D]" />
@@ -516,7 +516,7 @@ function VerifyContent() {
             </div>
           )}
 
-          {/* TAB 3: SCAN QR — Camera + Manual Fallback */}
+          {/* TAB 3: SCAN QR - Camera + Manual Fallback */}
           {activeTab === "qr" && (
             <div className="space-y-5">
               <div className="text-center max-w-md mx-auto space-y-2">
@@ -525,7 +525,7 @@ function VerifyContent() {
                 </div>
                 <h3 className="font-serif font-bold text-base text-[#2C2C24]">Live Camera QR Code Scanner</h3>
                 <p className="text-xs text-[#78786C] leading-relaxed">
-                  Hold your camera over the QR code printed on an official Revenue / Sub-Registrar extract to verify reference authenticity.
+                  Point your camera at the QR code printed on an official land document to verify it.
                 </p>
               </div>
 
@@ -688,9 +688,9 @@ function VerifyContent() {
               <div className="bg-[#FEFEFA] p-5 rounded-2xl border border-[#DED8CF]/80 flex flex-col sm:flex-row items-center gap-5 shadow-sm">
                 <img src={qrDataUrl} alt="Verification QR Code" className="w-28 h-28 border border-[#DED8CF] rounded-2xl p-1.5 bg-white shadow-sm shrink-0" />
                 <div className="space-y-1.5 text-center sm:text-left text-xs">
-                  <h4 className="font-serif font-bold text-sm text-[#2C2C24]">Official Scannable Verification QR Code</h4>
+                  <h4 className="font-serif font-bold text-sm text-[#2C2C24]">Shareable Verification QR Code</h4>
                   <p className="text-[#78786C] leading-relaxed">
-                    This QR code directly verifies this authentic evidence event without exposing owner names, survey boundary coordinates, or personal identification.
+                    Share this QR code with anyone to let them verify this record. No personal details are revealed.
                   </p>
                 </div>
               </div>
@@ -722,7 +722,7 @@ function VerifyContent() {
             </div>
           </div>
 
-          {/* Expandable "What Was Checked" — Evidence Chain */}
+          {/* Expandable "What Was Checked" - Evidence Chain */}
           <div className="organic-card rounded-3xl border border-[#DED8CF] p-6 sm:p-7 space-y-4 shadow-soft">
             <button
               onClick={() => setShowEvidenceChain(!showEvidenceChain)}
@@ -740,24 +740,24 @@ function VerifyContent() {
                 {/* Bullet list summary */}
                 <ul className="text-xs text-[#78786C] space-y-2 list-disc pl-5 leading-relaxed">
                   <li>
-                    <strong className="text-[#2C2C24]">Reference / Document Fingerprint:</strong> Canonical SHA-256 integrity hash verification against private off-chain Amazon S3 evidence storage.
+                    <strong className="text-[#2C2C24]">Document Fingerprint Check:</strong> We compared your document's digital fingerprint with the original stored by the government in secure AWS S3 storage.
                   </li>
                   <li>
-                    <strong className="text-[#2C2C24]">Authorized Source &amp; Event Timestamp:</strong> Traceable provenance to official AP Revenue, Registration, or Survey departments recorded in permissioned ledger.
+                    <strong className="text-[#2C2C24]">Source and Time Verified:</strong> We confirmed that this record comes from an official Revenue, Registration, or Survey department and checked the recorded date and time.
                   </li>
                   <li>
-                    <strong className="text-[#2C2C24]">Current Dispute / Supersession Status:</strong> Active judicial injunction orders or newer mutation supersession events verified (a dispute or newer deed immediately overrides positive verification).
+                    <strong className="text-[#2C2C24]">Dispute and Version Check:</strong> We checked if there is any active court case or if a newer version of this document exists (either one would block a positive result).
                   </li>
                 </ul>
 
                 {/* Detailed 6-item evidence chain */}
                 <div className="space-y-2 pt-3 border-t border-[#DED8CF]/70">
-                  <span className="text-[11px] text-[#78786C] font-bold uppercase tracking-wider block">6-Point Statutory Evidence Chain:</span>
+                  <span className="text-[11px] text-[#78786C] font-bold uppercase tracking-wider block">6-Point Verification Checklist:</span>
                   {[
-                    { label: "1. Verification Reference", value: "Matched to issued registry book" },
-                    { label: "2. Document Fingerprint (SHA-256)", value: "Exact Binary Parity" },
-                    { label: "3. Authorized Issuing Authority", value: "Pilot Revenue Department Attested" },
-                    { label: "4. Anchor Timestamp", value: "Immutable Slot Confirmed" },
+                    { label: "1. Verification Code", value: "Matched to official registry" },
+                    { label: "2. Document Fingerprint", value: "Exact Match Confirmed" },
+                    { label: "3. Issuing Authority", value: "Government Department Verified" },
+                    { label: "4. Date and Time", value: "Permanently Recorded" },
                     {
                       label: "5. Current Dispute Status",
                       value: result.status === "DISPUTED" ? "Active Injunction Hold Found" : "No Active Dispute Hold",
@@ -809,10 +809,10 @@ function VerifyContent() {
             </div>
 
             <div className="space-y-3 text-xs text-[#78786C] leading-relaxed">
-              <p><strong className="text-[#2C2C24]">1. Cryptographic Fingerprinting:</strong> Every official land document issued by the Revenue or Registration department receives a canonical SHA-256 fingerprint. Any 1-character alteration produces a deterministic <code>MISMATCH</code>.</p>
-              <p><strong className="text-[#2C2C24]">2. Private Off-Chain Storage:</strong> Full deeds and personal identification are encrypted in AWS S3 and DynamoDB. Public users can verify authenticity without exposing sensitive citizen data.</p>
-              <p><strong className="text-[#2C2C24]">3. Multi-Org Permissioned Ledger:</strong> Changes require multi-org endorsement across Revenue, Registration, and Survey departments on the Hyperledger Fabric <code>land-records-pilot</code> channel.</p>
-              <p><strong className="text-[#2C2C24]">4. Legal Dispute Priority:</strong> If a court injunction or dispute hold is flagged, positive verification is blocked to protect citizens from buying encumbered property.</p>
+              <p><strong className="text-[#2C2C24]">1. Digital Fingerprinting:</strong> Every official land document gets a unique digital fingerprint. Even a tiny change in the document creates a completely different fingerprint, so any tampering is caught instantly.</p>
+              <p><strong className="text-[#2C2C24]">2. Private Storage:</strong> Full deeds and personal information are stored securely in encrypted AWS servers. You can verify a document without exposing anyone's private details.</p>
+              <p><strong className="text-[#2C2C24]">3. Multi-Department Approval:</strong> Changes require approval from multiple government departments (Revenue, Registration, and Survey) on a shared secure network.</p>
+              <p><strong className="text-[#2C2C24]">4. Court Cases Come First:</strong> If a court case or dispute is flagged on a property, positive verification is blocked immediately to protect you from buying disputed land.</p>
             </div>
 
             <button
@@ -832,7 +832,7 @@ function VerifyContent() {
             <div className="flex justify-between items-center border-b border-[#DED8CF]/80 pb-3">
               <div className="flex items-center gap-2 text-[#2C2C24]">
                 <PhoneCall className="w-5 h-5 text-[#5D7052]" />
-                <h3 className="font-serif font-bold text-lg">Competent Authority Contact Directory</h3>
+                <h3 className="font-serif font-bold text-lg">Contact Your Local Office</h3>
               </div>
               <button
                 onClick={() => setShowContactModal(false)}
@@ -843,7 +843,7 @@ function VerifyContent() {
             </div>
 
             <p className="text-xs text-[#78786C]">
-              For legal title certification, boundary demarcation, or dispute resolution, contact the authorized district offices:
+              For legal title confirmation, boundary measurement, or dispute resolution, please contact the relevant district offices:
             </p>
 
             <div className="space-y-2.5 text-xs">

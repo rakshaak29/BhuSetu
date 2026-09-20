@@ -1,4 +1,4 @@
-# Technical Requirements Document — BhuSetu
+# Technical Requirements Document: BhuSetu
 
 | Field | Value |
 | --- | --- |

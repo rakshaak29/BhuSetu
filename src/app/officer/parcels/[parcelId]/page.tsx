@@ -271,7 +271,7 @@ export default function ParcelTimelinePage() {
                       <div className="flex flex-wrap items-center gap-2">
                         {eventTypeIcon(evt.eventType)}
                         <h3 className="font-serif font-bold text-[#2C2C24] text-sm sm:text-base">
-                          {evt.eventType} — {evt.evidenceType}
+                          {evt.eventType} • {evt.evidenceType}
                         </h3>
                         <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border ${eventStatusBadge(evt.status)}`}>
                           {evt.status}
@@ -308,7 +308,7 @@ export default function ParcelTimelinePage() {
                       </div>
                       <div className="flex items-center gap-1.5 text-[#78786C]">
                         <ShieldCheck className="w-3.5 h-3.5 text-[#5D7052] shrink-0" />
-                        <span>Checker: <span className="font-semibold text-[#2C2C24]">{evt.checkerActorId || "—"}</span></span>
+                        <span>Checker: <span className="font-semibold text-[#2C2C24]">{evt.checkerActorId || "Pending"}</span></span>
                       </div>
                     </div>
 

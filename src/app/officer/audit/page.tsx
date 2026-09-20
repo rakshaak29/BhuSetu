@@ -153,13 +153,13 @@ export default function AuditPage() {
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#5D7052]/30 border border-[#5D7052]/50 text-[#C9D6C3] text-[11px] font-semibold tracking-wider uppercase">
               <History className="w-3.5 h-3.5 text-[#A3B899]" />
-              Immutable District Ledger Audit Trail
+              District Audit Trail
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white">
               Audit Log & Export Centre
             </h1>
             <p className="text-xs sm:text-sm text-[#A8AEA4] max-w-2xl leading-relaxed">
-              All system events — identity lookups, verification inquiries, ledger writes, approvals, and dispute actions — logged with correlation IDs per §65B IT Act 2000.
+              Every action in the system is logged here with a unique ID, including verification requests, approvals, and court hold updates, as per Section 65B of the IT Act, 2000.
             </p>
           </div>
 
@@ -411,7 +411,7 @@ export default function AuditPage() {
           <div className="px-5 py-3.5 border-t border-[#DED8CF] bg-[#F0EBE5] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[10.5px] font-mono text-[#78786C]">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-[#5D7052]" />
-              Append-only ledger — no audit events can be deleted or modified post-record.
+              Permanent log: once recorded, audit entries cannot be edited or deleted.
             </span>
             <span>
               Export snapshot: <strong className="text-[#2C2C24]">{new Date(exportTimestamp).toLocaleString("en-IN")}</strong>
@@ -424,7 +424,7 @@ export default function AuditPage() {
       <div className="flex items-start gap-3 text-xs text-[#78786C] bg-[#F0EBE5]/60 border border-[#DED8CF] rounded-3xl p-5 sm:p-6 shadow-soft">
         <ShieldCheck className="w-5 h-5 text-[#5D7052] shrink-0 mt-0.5" />
         <p className="leading-relaxed">
-          <strong className="text-[#2C2C24]">§65B Indian Evidence / IT Act 2000 Compliance:</strong> This audit trail is admissible as electronic evidence. All events are cryptographically time-stamped and stored in append-only DynamoDB tables with no delete privileges granted to any role. Audit export access is restricted to users with the <code className="bg-[#E6DCCD] text-[#2C2C24] px-1.5 py-0.5 rounded-full font-mono text-[11px]">AUDITOR</code> or <code className="bg-[#E6DCCD] text-[#2C2C24] px-1.5 py-0.5 rounded-full font-mono text-[11px]">ADMIN</code> role.
+          <strong className="text-[#2C2C24]">Section 65B Electronic Evidence Compliance:</strong> This audit log can be presented in court as valid electronic evidence. Every event is time-stamped and stored permanently in secure database tables where no user or officer has permission to delete records. Exports are restricted to authorized Auditor and Admin accounts.
         </p>
       </div>
     </div>

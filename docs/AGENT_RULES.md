@@ -1,4 +1,4 @@
-# Agent Rules — BhuSetu
+# Agent Rules: BhuSetu
 
 These rules govern every AI assistant, automation, workflow bot, integration agent, and coding agent that acts on or advises about BhuSetu. They are mandatory product-safety controls, not suggestions.
 

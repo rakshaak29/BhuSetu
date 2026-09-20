@@ -1,8 +1,8 @@
-# Product Requirements Document — BhuSetu
+# Product Requirements Document: BhuSetu
 
 | Field | Value |
 | --- | --- |
-| Product | BhuSetu — Blockchain-Based Land Ownership Verification |
+| Product | BhuSetu: Blockchain-Based Land Ownership Verification |
 | Status | Draft v0.1 |
 | Target release | District pilot |
 | Primary market | State/UT land-administration ecosystem in India |

@@ -16,111 +16,112 @@ import {
   BookOpen,
   Cpu,
   Layers,
+  UserCheck,
 } from "lucide-react";
 
 const steps = [
   {
     number: "01",
     icon: <Hash className="w-6 h-6 text-[#C18C5D]" />,
-    title: "Document Fingerprinting (SHA-256 Hashing)",
-    summary: "Every land-record document — a Record of Rights extract, a Sub-Registrar deed, or a Survey report — is converted into a unique 64-character SHA-256 cryptographic hash the moment it is submitted.",
+    title: "Creating a Digital Fingerprint of Your Document",
+    summary: "Every land document (Record of Rights, sale deed, or survey report) gets a unique digital fingerprint the moment it is submitted. Think of it like a thumbprint for your file.",
     detail:
-      "The hash acts as a tamper-evident fingerprint. Even a single changed character in the document produces a completely different hash. The original document is never stored on the public ledger — only its fingerprint is. This ensures privacy while enabling independent verification by any third party who holds a copy of the original document.",
-    badge: "Cryptographic Integrity",
+      "This fingerprint is a 64-character code created using SHA-256 technology. If even one character in the document is changed, the fingerprint will be completely different. The original document is never stored publicly. Only the fingerprint is kept, which protects your privacy while still allowing anyone to check if a document is genuine.",
+    badge: "Document Safety",
     badgeColor: "text-[#C18C5D] bg-[#C18C5D]/10 border border-[#C18C5D]/30",
     example: {
-      label: "Sample SHA-256 Fingerprint",
+      label: "Sample Digital Fingerprint",
       value: "a3f9c821e047bcd90f41a2d93...",
     },
   },
   {
     number: "02",
     icon: <Users className="w-6 h-6 text-blue-600" />,
-    title: "Maker-Checker Dual-Control Submission",
+    title: "Two Officers Review Every Document",
     summary:
-      "A Registration Officer (Maker) submits the evidence proposal. A Tahsildar or Revenue Checker (Checker) — always a separate, distinct individual — independently reviews and approves or rejects the submission.",
+      "A Registration Officer uploads the document. A Tahsildar or Revenue Inspector (always a different person) reviews and approves or rejects it.",
     detail:
-      "The server enforces this rule programmatically: if the submitter's actor ID matches the approver's actor ID, the API returns HTTP 403 Forbidden — no exceptions. This dual-control design mirrors Indian Treasury rules and prevents single points of corruption.",
-    badge: "Dual Authority Control",
+      "The system enforces this rule automatically. If the same person tries to both upload and approve a document, the system will block it with an error. This two-person rule prevents any single officer from tampering with records.",
+    badge: "Two-Person Approval",
     badgeColor: "text-blue-700 bg-blue-50 border border-blue-200",
     example: {
-      label: "Server Guard Response on Self-Approval",
-      value: "HTTP 403 — Creator cannot approve their own submission",
+      label: "What happens if same person tries to approve",
+      value: "Error 403: The person who submitted cannot approve",
     },
   },
   {
     number: "03",
     icon: <GitMerge className="w-6 h-6 text-purple-600" />,
-    title: "Multi-Organisation Ledger Endorsement",
+    title: "Multiple Government Departments Confirm the Record",
     summary:
-      "Once approved, the evidence event is broadcast to all participating organisations on the permissioned Hyperledger Fabric ledger: RevenueOrg, RegistrationOrg, and SurveyOrg must each endorse the transaction.",
+      "After approval, the record is sent to all participating departments on a secure shared record book: Revenue, Registration, and Survey departments must each confirm the entry.",
     detail:
-      "Endorsement means each organisation independently verifies that the transaction follows the agreed smart-contract rules. Only after a policy-defined quorum (e.g. 2 of 3 orgs) has endorsed does the ordering service commit the block to the permanent chain. No single government department can alter records unilaterally.",
-    badge: "Hyperledger Fabric · land-records-pilot",
+      "Each department independently checks that the record follows all the agreed rules. Only after enough departments have confirmed does the record become permanent. No single government department can change records on its own.",
+    badge: "Multi-Department Verification",
     badgeColor: "text-purple-700 bg-purple-50 border border-purple-200",
     example: {
-      label: "Endorsing Orgs",
-      value: "RevenueOrg · RegistrationOrg · SurveyOrg",
+      label: "Confirming Departments",
+      value: "Revenue, Registration, Survey",
     },
   },
   {
     number: "04",
     icon: <Database className="w-6 h-6 text-emerald-600" />,
-    title: "Immutable Block Commit & Reference Generation",
+    title: "Record Saved Permanently with a Verification Code",
     summary:
-      "Endorsed transactions are written into an immutable block with a unique block hash, block number, and transaction ID. BhuSetu generates a short, human-readable Verification Reference (e.g., BHS-2M7D-9KQX) for each committed evidence event.",
+      "Confirmed records are written permanently and cannot be changed. BhuSetu gives each record a short, easy-to-read verification code (like BHS-2M7D-9KQX) that you can use anytime to check it.",
     detail:
-      "Because Fabric ledger blocks are append-only and cryptographically chained, no party — not even the system administrator — can alter or delete a committed block without breaking every subsequent hash in the chain. The verification reference can be printed on physical documents and presented to banks or courts for independent lookup.",
-    badge: "Append-Only Immutable Chain",
+      "Once saved, nobody (not even a system administrator) can change or delete a record without breaking the entire chain. The verification code can be printed on physical documents and shown to banks or courts for independent checking.",
+    badge: "Permanent Record",
     badgeColor: "text-emerald-700 bg-emerald-50 border border-emerald-200",
     example: {
-      label: "Sample Verification Reference",
+      label: "Sample Verification Code",
       value: "BHS-2M7D-9KQX",
     },
   },
   {
     number: "05",
     icon: <Search className="w-6 h-6 text-slate-600" />,
-    title: "Public Verification (Zero PII Exposure)",
+    title: "Anyone Can Verify Without Seeing Private Details",
     summary:
-      "Any citizen, bank, or institution can verify a document by submitting its SHA-256 hash or the printed Verification Reference. BhuSetu compares against the ledger record and returns a clear status — VERIFIED, MISMATCH, or DISPUTED — without revealing owner names or private identifiers.",
+      "Any citizen, bank, or court can check a document by entering its verification code or uploading the file. BhuSetu shows a clear result (Verified, Mismatch, or Disputed) without revealing the owner's name or personal details.",
     detail:
-      "Owner parcel IDs are masked (e.g. AP-XX-•••-041) in all public API responses. Private S3 file references are never returned. The result is a clean, trustworthy signal with a mandatory legal disclaimer — suitable for display in a bank branch or court filing.",
-    badge: "PII Minimisation · Public API",
+      "Land parcel IDs are partially hidden (like AP-XX-...-041) in all results. Private files are never shared. The result is a clean, trustworthy answer that can be used in a bank branch or court filing.",
+    badge: "Privacy Protected Verification",
     badgeColor: "text-slate-700 bg-slate-50 border border-slate-200",
     example: {
-      label: "Sample Masked Parcel Reference",
-      value: "AP-XX-•••-041",
+      label: "How Parcel ID appears publicly",
+      value: "AP-XX-...-041",
     },
   },
   {
     number: "06",
     icon: <AlertTriangle className="w-6 h-6 text-status-disputed-text" />,
-    title: "Dispute Hold Override",
+    title: "Court Cases Immediately Block Verification",
     summary:
-      "A District Court Liaison or Revenue Officer can place a Dispute Hold on any parcel at any time. This immediately overrides the verification status to DISPUTED — regardless of how many approved evidence events exist.",
+      "A District Court officer or Revenue Officer can place a hold on any land parcel at any time. This immediately changes the status to Disputed, no matter how many verified records exist for that parcel.",
     detail:
-      "The DISPUTED status is displayed prominently in red on all public verification outputs, alerting banks, lawyers, and citizens to an active legal encumbrance. The hold includes a mandatory court-order reference and reason. The hold can only be released by an authorised officer, and every change is logged immutably in the audit trail.",
-    badge: "Dispute Override · Mandatory Hold",
+      "The Disputed status is shown in red on all verification results, warning banks, lawyers, and citizens about an active legal issue. The hold includes a court order reference number. Only an authorized officer can remove the hold, and every change is permanently recorded.",
+    badge: "Court Case Protection",
     badgeColor: "text-status-disputed-text bg-status-disputed-bg border border-status-disputed-border",
     example: {
-      label: "Sample Dispute Reference",
+      label: "Sample Court Reference",
       value: "COURT-OS-442-2025",
     },
   },
   {
     number: "07",
     icon: <Eye className="w-6 h-6 text-indigo-600" />,
-    title: "Full Audit Trail & §65B Export",
+    title: "Every Action is Recorded and Legally Admissible",
     summary:
-      "Every action in the system — login, read, evidence submission, approval, dispute flag, or audit export — is logged in an append-only DynamoDB audit table with actor ID, role, jurisdiction, timestamp, and outcome.",
+      "Every action in the system (login, document check, approval, dispute, or export) is permanently recorded with the officer's ID, role, area, time, and result.",
     detail:
-      "The audit trail is exportable as structured JSON, admissible under §65B of the Information Technology Act, 2000. Audit read access is restricted to AUDITOR and ADMIN roles only. Each log entry includes a unique Correlation ID to trace any multi-step workflow end-to-end.",
-    badge: "§65B IT Act 2000 · Admissible Evidence",
+      "This record can be exported as a structured file that is accepted as legal evidence under Section 65B of the IT Act, 2000. Only auditors and admins can view the full record. Each entry has a unique tracking ID to trace any action from start to finish.",
+    badge: "Section 65B IT Act 2000",
     badgeColor: "text-indigo-700 bg-indigo-50 border border-indigo-200",
     example: {
-      label: "Audit Actions Logged",
-      value: "APPROVE_EVIDENCE · FLAG_DISPUTE · EXPORT_AUDIT · PUBLIC_VERIFY",
+      label: "Actions Recorded",
+      value: "Approve, Flag Dispute, Export Audit, Public Verify",
     },
   },
 ];
@@ -128,23 +129,23 @@ const steps = [
 const principles = [
   {
     icon: <ShieldCheck className="w-5 h-5 text-emerald-600" />,
-    title: "Evidence, Not Title",
-    body: "BhuSetu verifies that a document's cryptographic fingerprint matches an authorised record. It never declares legal title or ownership under the Indian Registration Act 1908 or Transfer of Property Act.",
+    title: "We Verify Documents, Not Ownership",
+    body: "BhuSetu checks if a document's digital fingerprint matches an official record. It does not declare legal ownership. The Revenue Office and Courts remain the final authority under Indian law.",
   },
   {
     icon: <Lock className="w-5 h-5 text-[#C18C5D]" />,
-    title: "Minimal PII Disclosure",
-    body: "Owner names, Aadhaar, and full parcel IDs are never exposed in public API responses. Masking follows the '•••' convention — sharing only the minimum identifier needed for verification.",
+    title: "Your Personal Details Stay Private",
+    body: "Owner names, Aadhaar numbers, and full parcel IDs are never shown in public results. We only share the minimum information needed to confirm a document is real.",
   },
   {
     icon: <Layers className="w-5 h-5 text-purple-600" />,
-    title: "Permissioned Fabric — Not Public Blockchain",
-    body: "BhuSetu runs on a private Hyperledger Fabric network operated by authorised government organisations. It is not a public cryptocurrency chain. Participation requires identity certificates issued by the channel administrator.",
+    title: "Private Government Network, Not Public Crypto",
+    body: "BhuSetu runs on a private network operated by authorized government departments. It is not a public cryptocurrency. Only verified government officers can add records.",
   },
   {
     icon: <Scale className="w-5 h-5 text-blue-600" />,
-    title: "Dispute Always Wins",
-    body: "Even a parcel with 50 VERIFIED evidence events will show DISPUTED in all public outputs if a Dispute Hold is active. Legal status always supersedes digital verification.",
+    title: "Court Cases Always Take Priority",
+    body: "Even if a land parcel has 50 verified documents, it will show as Disputed if there is an active court case. Legal status always comes first.",
   },
 ];
 
@@ -155,13 +156,13 @@ export default function HowItWorksPage() {
       <div className="text-center space-y-6">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#5D7052]/10 border border-[#5D7052]/25 rounded-full text-[#5D7052] text-xs font-semibold tracking-wider uppercase">
           <BookOpen className="w-4 h-4 text-[#5D7052]" />
-          Platform Transparency Guide
+          How It Works
         </div>
         <h1 className="font-serif text-3xl sm:text-5xl font-bold text-[#2C2C24] tracking-tight leading-[1.15] max-w-3xl mx-auto">
-          How BhuSetu Verification Works
+          How BhuSetu Verifies Your Land Documents
         </h1>
         <p className="text-base text-[#78786C] max-w-2xl mx-auto leading-relaxed">
-          BhuSetu is a land-record evidence verification platform built on cryptographic hashing, permissioned blockchain endorsement, and institutional dual-control. This page explains every step from document upload to public verification in plain language.
+          BhuSetu helps you check if a land document is genuine. It uses digital fingerprinting, a secure shared record book, and a two-person approval system. Here is how every step works, explained in simple language.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
           <Link
@@ -172,11 +173,11 @@ export default function HowItWorksPage() {
             <span>Verify a Document Now</span>
           </Link>
           <Link
-            href="/demo"
+            href="/officer"
             className="inline-flex items-center justify-center gap-2 px-7 py-3 bg-[#5D7052] hover:bg-[#4E5E44] active:scale-95 text-[#F3F4F1] text-xs font-semibold rounded-full transition-all duration-200 shadow-soft"
           >
-            <Cpu className="w-4 h-4" />
-            <span>Run Interactive Demo</span>
+            <UserCheck className="w-4 h-4" />
+            <span>Explore Officer Portal</span>
           </Link>
         </div>
       </div>
@@ -185,15 +186,15 @@ export default function HowItWorksPage() {
       <div className="flex items-start gap-3.5 bg-[#C18C5D]/10 border border-[#C18C5D]/30 rounded-3xl p-6 shadow-xs">
         <AlertTriangle className="w-5 h-5 text-[#C18C5D] shrink-0 mt-0.5" />
         <div className="text-xs sm:text-sm text-[#2C2C24] leading-relaxed">
-          <strong className="text-[#C18C5D] font-bold">Statutory Notice:</strong> BhuSetu verifies evidence document fingerprints and records append-only history pursuant to §65B Information Technology Act 2000. Official State Revenue, Registration, Survey/Settlement, and Judicial systems remain the sole legal authority. A verified result indicates evidence authenticity at the recorded time and is <em>not</em> a conclusive guarantee of legal title, freedom from encumbrance, or boundary accuracy.
+          <strong className="text-[#C18C5D] font-bold">Important Legal Notice:</strong> BhuSetu checks if a document's digital fingerprint matches an official record, as per Section 65B of the Information Technology Act, 2000. The official Revenue, Registration, Survey, and Court systems remain the final legal authority. A "Verified" result means the document is genuine at the recorded time. It does not guarantee ownership, freedom from disputes, or boundary accuracy.
         </div>
       </div>
 
       {/* Step-by-step Process */}
       <div className="space-y-8">
         <div className="text-center space-y-2">
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#2C2C24]">The 7-Step Verification Lifecycle</h2>
-          <p className="text-xs sm:text-sm text-[#78786C]">From document upload to public result — every step enforced by code, not policy.</p>
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#2C2C24]">The 7-Step Verification Process</h2>
+          <p className="text-xs sm:text-sm text-[#78786C]">From document upload to final result, every step is enforced by the system automatically.</p>
         </div>
 
         <div className="space-y-6">
@@ -242,8 +243,8 @@ export default function HowItWorksPage() {
       {/* Core Design Principles */}
       <div className="space-y-6">
         <div className="text-center space-y-2">
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#2C2C24]">Core Design Principles</h2>
-          <p className="text-xs sm:text-sm text-[#78786C]">What BhuSetu is — and what it is explicitly not.</p>
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#2C2C24]">Our Core Principles</h2>
+          <p className="text-xs sm:text-sm text-[#78786C]">What BhuSetu does and what it does not do.</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {principles.map((p) => (
@@ -267,26 +268,26 @@ export default function HowItWorksPage() {
             <Cpu className="w-4 h-4" />
             Technology Architecture
           </div>
-          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#F3F4F1]">What Powers BhuSetu</h2>
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#F3F4F1]">Technology Behind BhuSetu</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
           <div className="bg-[#2A3129] rounded-2xl p-5 border border-[#3D473B] space-y-2">
-            <div className="text-[#8FB97C] font-semibold font-sans text-xs">Ledger Layer</div>
+            <div className="text-[#8FB97C] font-semibold font-sans text-xs">Secure Record Book</div>
             <div className="text-[#F3F4F1] font-bold">Hyperledger Fabric v2.x</div>
-            <div className="text-[#A8A399] text-[11px]">Channel: land-records-pilot</div>
-            <div className="text-[#A8A399] text-[11px]">Orgs: Revenue · Registration · Survey</div>
+            <div className="text-[#A8A399] text-[11px]">Network: Land Records Pilot</div>
+            <div className="text-[#A8A399] text-[11px]">Departments: Revenue, Registration, Survey</div>
           </div>
           <div className="bg-[#2A3129] rounded-2xl p-5 border border-[#3D473B] space-y-2">
-            <div className="text-[#E0A97D] font-semibold font-sans text-xs">Storage Layer</div>
+            <div className="text-[#E0A97D] font-semibold font-sans text-xs">Data Storage</div>
             <div className="text-[#F3F4F1] font-bold">AWS DynamoDB</div>
-            <div className="text-[#A8A399] text-[11px]">Tables: parcels · evidence · audit</div>
-            <div className="text-[#A8A399] text-[11px]">S3: bhusetu-evidence (encrypted)</div>
+            <div className="text-[#A8A399] text-[11px]">Tables: parcels, evidence, audit</div>
+            <div className="text-[#A8A399] text-[11px]">Files: AWS S3 (encrypted)</div>
           </div>
           <div className="bg-[#2A3129] rounded-2xl p-5 border border-[#3D473B] space-y-2">
-            <div className="text-[#E6DCCD] font-semibold font-sans text-xs">Application Layer</div>
-            <div className="text-[#F3F4F1] font-bold">Next.js 15 App Router</div>
-            <div className="text-[#A8A399] text-[11px]">Deployed: AWS Lambda + CloudFront</div>
-            <div className="text-[#A8A399] text-[11px]">API: REST · SHA-256 · RBAC</div>
+            <div className="text-[#E6DCCD] font-semibold font-sans text-xs">Website Platform</div>
+            <div className="text-[#F3F4F1] font-bold">Next.js 15</div>
+            <div className="text-[#A8A399] text-[11px]">Hosted on AWS</div>
+            <div className="text-[#A8A399] text-[11px]">Secure REST API with role-based access</div>
           </div>
         </div>
       </div>
@@ -294,7 +295,7 @@ export default function HowItWorksPage() {
       {/* CTA */}
       <div className="text-center space-y-4 py-4">
         <h2 className="font-serif text-2xl font-bold text-[#2C2C24]">Ready to verify a document?</h2>
-        <p className="text-xs sm:text-sm text-[#78786C]">Submit a document hash or paste a verification reference to get an instant result.</p>
+        <p className="text-xs sm:text-sm text-[#78786C]">Enter your verification code or upload a document to check it now.</p>
         <Link
           href="/verify"
           className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#C18C5D] hover:bg-[#AF7B4E] active:scale-95 text-white font-semibold rounded-full transition-all duration-200 shadow-[0_4px_16px_-2px_rgba(193,140,93,0.35)] text-xs sm:text-sm"

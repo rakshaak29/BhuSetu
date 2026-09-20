@@ -1,5 +1,5 @@
 /**
- * BhuSetu — Create DynamoDB GSI for parcelId queries
+ * BhuSetu: Create DynamoDB GSI for parcelId queries
  *
  * Adds 'parcelId-createdAt-index' to 'bhusetu-evidence' table.
  * Partition Key: parcelId (S)

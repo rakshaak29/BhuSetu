@@ -36,9 +36,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BhuSetu (भू-सेतु) | Land Record Evidence Verification Platform",
+  title: "BhuSetu (भू-सेतु) | Land Record Verification Platform",
   description:
-    "Official district pilot for cryptographically verifiable land record evidence in India.",
+    "Official portal to verify land record authenticity and check for court disputes.",
 };
 
 const NAV_LINKS = [
@@ -66,12 +66,6 @@ const NAV_LINKS = [
     icon: <History className="w-4 h-4 text-[#78786C]" />,
     isSpecial: false,
   },
-  {
-    href: "/demo",
-    label: "Demo Script",
-    icon: <Landmark className="w-4 h-4 text-[#C18C5D]" />,
-    isSpecial: true,
-  },
 ];
 
 const FOOTER_LINKS = [
@@ -79,7 +73,6 @@ const FOOTER_LINKS = [
   { href: "/how-it-works", label: "How It Works" },
   { href: "/officer", label: "Officer Portal" },
   { href: "/officer/audit", label: "Audit Log" },
-  { href: "/demo", label: "Demo Script" },
 ];
 
 export default function RootLayout({
@@ -136,10 +129,10 @@ export default function RootLayout({
                 ))}
               </nav>
 
-              {/* Node status badge (desktop) */}
+              {/* Official status badge (desktop) */}
               <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 bg-[#5D7052]/10 rounded-full border border-[#5D7052]/20 text-[10px] font-mono text-[#5D7052] font-semibold shrink-0">
-                <Cpu className="w-3.5 h-3.5 text-[#5D7052]" />
-                <span>Node #256 · Online</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-[#5D7052]" />
+                <span>Govt of India · Pilot</span>
               </div>
             </div>
           </div>
@@ -166,7 +159,7 @@ export default function RootLayout({
         {/* ─── Main Content ─── */}
         <main className="flex-1">{children}</main>
 
-        {/* ─── Sovereign Institutional Footer ─── */}
+        {/* ─── Footer ─── */}
         <footer className="bg-[#1F241E] text-[#DED8CF] text-xs py-12 border-t border-[#363E34] mt-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             {/* Top row: brand + nav links */}
@@ -176,7 +169,7 @@ export default function RootLayout({
                   <BhuSetuLogo variant="footer" size="sm" showSubtitle={false} />
                 </Link>
                 <p className="text-[11px] text-[#A8A399] max-w-xs leading-relaxed">
-                  Permissioned Hyperledger Fabric Ledger Pilot · State/UT Land Administration · Bengaluru District
+                  Land Record Verification Pilot · State Revenue Department · Andhra Pradesh
                 </p>
                 <div className="flex items-center gap-1.5 text-[11px] text-[#C2BDB2]">
                   <Phone className="w-3 h-3 text-[#5D7052]" />
@@ -205,17 +198,17 @@ export default function RootLayout({
               </div>
             </div>
 
-            {/* §65B Statutory Evidentiary Notice */}
+            {/* Legal Notice */}
             <div className="flex items-start gap-3 bg-[#2A3129] p-4 rounded-2xl border border-[#3D473B]">
               <Lock className="w-4 h-4 text-[#5D7052] shrink-0 mt-0.5" />
               <p className="leading-relaxed text-[#DED8CF] max-w-4xl text-[11px]">
-                <strong className="text-[#F3F4F1]">Statutory Evidentiary Notice:</strong> BhuSetu verifies evidence document fingerprints and records append-only history pursuant to §65B Information Technology Act 2000. Official State Revenue, Registration, Survey/Settlement, and Judicial systems remain the sole legal authority. A verified result indicates evidence authenticity at the recorded time and is not a conclusive guarantee of legal title.
+                <strong className="text-[#F3F4F1]">Legal Notice:</strong> BhuSetu checks document fingerprints against official government records as per Section 65B of the IT Act, 2000. Official State Revenue Offices, Registration Departments, and Courts remain the sole legal authority. A verified result confirms the document matches official records on file, but does not replace court rulings or registration deeds.
               </p>
             </div>
 
             {/* Bottom bar */}
             <div className="flex flex-col sm:flex-row justify-between items-center text-[10px] text-[#8C867B] pt-2 border-t border-[#363E34] gap-2">
-              <div>© 2026 BhuSetu Platform · Built on AWS Serverless &amp; Hyperledger Fabric</div>
+              <div>© 2026 BhuSetu Platform · Built on AWS Serverless &amp; Secure Blockchain</div>
               <div className="flex items-center gap-3">
                 <span>WCAG 2.2 AA Accessible</span>
                 <span>·</span>

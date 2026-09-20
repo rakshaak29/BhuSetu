@@ -43,21 +43,21 @@ export default function Home() {
           {/* Pilot Badge */}
           <div className="animate-fade-in-up inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-[#5D7052]/10 border border-[#5D7052]/25 text-[#5D7052] text-[11px] font-bold tracking-widest uppercase">
             <ShieldCheck className="w-4 h-4 text-[#5D7052]" />
-            DIGITAL LAND RECORD VERIFICATION · DISTRICT PILOT
+            LAND RECORD VERIFICATION
           </div>
 
           {/* Fraunces Headline */}
           <h1 className="animate-fade-in-up stagger-2 font-serif text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-tight text-[#2C2C24] leading-[1.12] max-w-3xl mx-auto">
-            Verify land-record evidence{" "}
+            Check if your land document{" "}
             <span className="relative inline-block">
-              <span className="relative z-10">with confidence.</span>
+              <span className="relative z-10">is genuine.</span>
               <span className="absolute bottom-1 left-0 right-0 h-3 bg-[#5D7052]/10 rounded-full -z-0" />
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="animate-fade-in-up stagger-3 text-base sm:text-lg text-[#78786C] max-w-2xl mx-auto leading-relaxed font-normal">
-            Check whether an issued reference or document matches an authorized state record — without exposing private personal information.
+            Enter your verification code or upload a document to confirm it matches official government records. Your personal details stay private.
           </p>
 
           {/* Tactile Pill Search Bar */}
@@ -66,7 +66,7 @@ export default function Home() {
               <Search className="w-5 h-5 text-[#78786C] ml-4 shrink-0" />
               <input
                 type="text"
-                placeholder="Enter Verification Reference (e.g. BHS-2M7D-9KQX)..."
+                placeholder="Enter your verification code (e.g. BHS-2M7D-9KQX)..."
                 value={quickRef}
                 onChange={(e) => setQuickRef(e.target.value)}
                 className="w-full py-4 px-3.5 bg-transparent text-[#2C2C24] placeholder-[#78786C]/70 focus:outline-none text-sm font-mono"
@@ -75,7 +75,7 @@ export default function Home() {
                 type="submit"
                 className="btn-shine mr-2 px-6 py-2.5 bg-[#C18C5D] hover:bg-[#AF7B4E] active:scale-95 text-white font-semibold text-xs rounded-full transition-all duration-200 shrink-0 flex items-center gap-1.5 shadow-[0_4px_20px_-2px_rgba(193,140,93,0.4)]"
               >
-                <span>Verify Evidence</span>
+                <span>Check Now</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -103,7 +103,7 @@ export default function Home() {
           {/* Privacy Guarantee */}
           <div className="animate-fade-in-up stagger-5 pt-1 text-xs text-[#78786C] flex items-center justify-center gap-2">
             <Lock className="w-3.5 h-3.5 text-[#5D7052]" />
-            <span>Privacy-first verification · Zero owner PII is exposed in public verification</span>
+            <span>Your personal details are never shown publicly during verification</span>
           </div>
         </div>
       </section>
@@ -113,13 +113,13 @@ export default function Home() {
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#C18C5D]/10 border border-[#C18C5D]/25 text-[#C18C5D] text-[10px] font-bold tracking-widest uppercase">
             <Sparkles className="w-3.5 h-3.5" />
-            VERIFICATION PATHWAYS
+            WAYS TO VERIFY
           </div>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#2C2C24]">
-            Three Entry Pathways
+            Three Ways to Verify
           </h2>
           <p className="text-sm text-[#78786C] max-w-lg mx-auto">
-            Choose your preferred path to verify land record evidence authenticity.
+            Pick the method that works best for you.
           </p>
         </div>
 
@@ -130,9 +130,9 @@ export default function Home() {
               <div className="w-14 h-14 rounded-2xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center group-hover:bg-[#5D7052] group-hover:text-[#F3F4F1] transition-all duration-300 group-hover:shadow-[0_4px_16px_-2px_rgba(93,112,82,0.3)]">
                 <QrCode className="w-7 h-7" />
               </div>
-              <h3 className="font-serif text-lg font-bold text-[#2C2C24]">Scan QR</h3>
+              <h3 className="font-serif text-lg font-bold text-[#2C2C24]">Scan QR Code</h3>
               <p className="text-sm text-[#78786C] leading-relaxed">
-                Scan an issued BhuSetu QR code on a physical deed extract, patta, or official RTC document.
+                Use your phone camera to scan the QR code printed on your land document (patta, RTC, or deed).
               </p>
             </div>
             <Link
@@ -144,7 +144,7 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Enter Reference — Featured / Primary CTA */}
+          {/* Enter Reference - Featured / Primary CTA */}
           <div className="organic-card rounded-3xl p-8 flex flex-col justify-between space-y-6 border-2 border-[#C18C5D]/40 shadow-float group hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden">
             {/* Subtle gradient accent */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#C18C5D] via-[#E0A97D] to-[#C18C5D]" />
@@ -157,7 +157,7 @@ export default function Home() {
                 <h3 className="font-serif text-lg font-bold text-[#2C2C24]">Enter Reference</h3>
               </div>
               <p className="text-sm text-[#78786C] leading-relaxed">
-                Enter an authorized 12-character verification reference printed on registered revenue certificates.
+                Type the 12-character code (like BHS-2M7D-9KQX) printed on your official land certificate.
               </p>
             </div>
             <Link
@@ -177,14 +177,14 @@ export default function Home() {
               </div>
               <h3 className="font-serif text-lg font-bold text-[#2C2C24]">Upload Document</h3>
               <p className="text-sm text-[#78786C] leading-relaxed">
-                Compare an approved document binary fingerprint using client-side SHA-256 cryptographic hashing.
+                Upload your land document file (PDF) and we will check if it matches the original on record.
               </p>
             </div>
             <Link
               href="/verify?tab=upload"
               className="w-full py-3 px-4 bg-[#F0EBE5] hover:bg-[#E6DCCD] text-[#2C2C24] text-xs font-semibold rounded-full flex items-center justify-center gap-2 transition-all duration-200 border border-[#DED8CF] active:scale-95 group-hover:bg-[#5D7052]/10 group-hover:border-[#5D7052]/25 group-hover:text-[#5D7052]"
             >
-              <span>Compare Document Hash</span>
+              <span>Upload and Check</span>
               <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
           </div>
@@ -203,7 +203,7 @@ export default function Home() {
                 <span className="inline-block px-3 py-0.5 text-[11px] font-extrabold uppercase tracking-wider rounded-full bg-[#E8F5EE] text-[#1E7B4D] border border-[#A7F3D0]">
                   ✓ EVIDENCE VERIFIED
                 </span>
-                <h3 className="font-serif text-lg font-bold text-[#2C2C24] mt-1">Authorized Evidence Match</h3>
+                <h3 className="font-serif text-lg font-bold text-[#2C2C24] mt-1">Document Verified Successfully</h3>
               </div>
             </div>
             <div className="text-xs font-mono bg-[#F0EBE5] text-[#2C2C24] px-4 py-2 rounded-full border border-[#DED8CF] font-bold self-start sm:self-auto flex items-center gap-2">
@@ -214,15 +214,15 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs bg-[#FDFCF8] p-5 rounded-2xl border border-[#DED8CF]/80 font-mono">
             <div>
-              <span className="text-[#78786C] block text-[11px] mb-1">Authorized Source</span>
-              <span className="font-bold text-[#2C2C24]">Pilot Revenue Department · Bengaluru</span>
+              <span className="text-[#78786C] block text-[11px] mb-1">Issued By</span>
+              <span className="font-bold text-[#2C2C24]">Revenue Department, Bengaluru (Pilot)</span>
             </div>
             <div>
-              <span className="text-[#78786C] block text-[11px] mb-1">Issue Timestamp</span>
-              <span className="font-bold text-[#2C2C24]">19 Sep 2026 · 10:42:18 IST</span>
+              <span className="text-[#78786C] block text-[11px] mb-1">Date Issued</span>
+              <span className="font-bold text-[#2C2C24]">19 Sep 2026, 10:42:18 IST</span>
             </div>
             <div>
-              <span className="text-[#78786C] block text-[11px] mb-1">Masked Parcel Reference</span>
+              <span className="text-[#78786C] block text-[11px] mb-1">Land Parcel ID (Hidden)</span>
               <span className="font-bold text-[#2C2C24]">AP-XX-•••-041</span>
             </div>
             <div>
@@ -235,10 +235,10 @@ export default function Home() {
           <div className="bg-[#242823] text-[#DED8CF] p-5 rounded-2xl text-xs space-y-1.5 border border-[#363E34]">
             <div className="flex items-center gap-1.5 font-bold text-[#C18C5D] uppercase tracking-wider text-[10px]">
               <ShieldAlert className="w-3.5 h-3.5" />
-              <span>Mandatory Product Legal Disclaimer</span>
+              <span>Important Legal Notice</span>
             </div>
             <p className="leading-relaxed text-[#C2BDB2] text-[11px]">
-              This result confirms an evidence match to an authorized record at the time shown. It is not, by itself, a determination of legal title, ownership, encumbrance, or boundary.
+              This result confirms that the document matches an official record at the time shown. It does not by itself prove ownership, legal title, or freedom from any disputes.
             </p>
           </div>
         </div>
@@ -250,13 +250,13 @@ export default function Home() {
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#5D7052]/10 border border-[#5D7052]/25 text-[#5D7052] text-[10px] font-bold tracking-widest uppercase">
               <Cpu className="w-3.5 h-3.5" />
-              PLATFORM ARCHITECTURE
+              HOW WE KEEP RECORDS SAFE
             </div>
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#2C2C24]">
-              Core Technical Architecture
+              Built for Trust and Transparency
             </h3>
             <p className="text-sm text-[#78786C] max-w-lg mx-auto">
-              Designed for Indian digital public infrastructure, cryptographic security, and statutory auditability.
+              Designed for Indian government needs with strong security and full transparency.
             </p>
           </div>
 
@@ -265,26 +265,26 @@ export default function Home() {
               {
                 icon: <CheckCircle2 className="w-5 h-5" />,
                 iconBg: "bg-[#5D7052]/10 text-[#5D7052]",
-                title: "Authoritative Source First",
-                desc: "Blockchain records integrity and provenance; official State Revenue & Court records remain sole legal authority.",
+                title: "Government Records Come First",
+                desc: "Your Revenue Office and Courts are always the final authority. BhuSetu only helps you check if a document is genuine.",
               },
               {
                 icon: <Lock className="w-5 h-5" />,
                 iconBg: "bg-[#5D7052]/10 text-[#5D7052]",
-                title: "PII Protected Off-Chain",
-                desc: "No owner PII, document PDFs, or raw coordinates are ever placed on the blockchain or in public responses.",
+                title: "Your Privacy is Protected",
+                desc: "Your name, Aadhaar, and personal details are never shown publicly. Only the verification result is visible.",
               },
               {
                 icon: <Cpu className="w-5 h-5" />,
                 iconBg: "bg-[#C18C5D]/15 text-[#C18C5D]",
-                title: "Server-Side Maker-Checker",
-                desc: "Strict separation of duties. Submitting creator cannot approve their own evidence proposal.",
+                title: "Two Officers Must Approve",
+                desc: "One officer uploads a document and a different officer approves it. No single person can change records alone.",
               },
               {
                 icon: <AlertTriangle className="w-5 h-5" />,
                 iconBg: "bg-[#A85448]/10 text-[#A85448]",
-                title: "Dispute Hold Protection",
-                desc: "Active court/revenue dispute holds immediately override positive verification to protect citizens.",
+                title: "Court Cases Block Verification",
+                desc: "If there is an active court case on a land parcel, the system will warn you right away to protect you from buying disputed property.",
               },
             ].map((item, idx) => (
               <div
@@ -312,17 +312,17 @@ export default function Home() {
           
           <div className="relative z-10 space-y-5">
             <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#F3F4F1]">
-              Start verifying land records today
+              Ready to check your land document?
             </h2>
             <p className="text-sm text-[#A8A399] max-w-lg mx-auto">
-              Submit a document hash or paste a verification reference to get an instant cryptographic result.
+              Enter your verification code or upload a document to get an instant result.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/verify"
                 className="btn-shine inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#C18C5D] hover:bg-[#AF7B4E] text-white font-semibold text-sm rounded-full transition-all duration-200 shadow-[0_4px_20px_-2px_rgba(193,140,93,0.4)] active:scale-95"
               >
-                <span>Verify a Record</span>
+                <span>Check a Record</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link

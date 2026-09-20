@@ -1,4 +1,4 @@
-# Most Important Features Page — BhuSetu
+# Most Important Features Page: BhuSetu
 
 ## Purpose
 
@@ -6,7 +6,7 @@ This page prioritizes the features required for a safe district pilot and define
 
 ## 1. Feature priority
 
-### P0 — Required for a credible pilot
+### P0: Required for a credible pilot
 
 | Feature | User value | Acceptance signal |
 | --- | --- | --- |
@@ -20,7 +20,7 @@ This page prioritizes the features required for a safe district pilot and define
 | Role/jurisdiction access | Limits records and actions to appropriate authority. | Unauthorized access is denied and audited. |
 | Audit timeline/export | Lets an auditor reconstruct a record’s provenance and system actions. | History includes actor, authority, time, source, event, and result. |
 
-### P1 — Important after P0 is proven
+### P1: Important after P0 is proven
 
 | Feature | Why it matters |
 | --- | --- |
@@ -31,7 +31,7 @@ This page prioritizes the features required for a safe district pilot and define
 | Notification workflow | Makes approvals, failed integrations, and dispute holds actionable. |
 | Bank/verifier restricted workspace | Supports legitimate due diligence without broad data exposure. |
 
-### P2 — Scale and optimization
+### P2: Scale and optimization
 
 | Feature | Why it is deferred |
 | --- | --- |
@@ -41,7 +41,7 @@ This page prioritizes the features required for a safe district pilot and define
 | Advanced analytics | Avoid until privacy, bias, and lawful-purpose controls are mature. |
 | Native mobile app | Responsive web/PWA validates demand first. |
 
-## 2. Critical page specification — Verify Land Record
+## 2. Critical page specification: Verify Land Record
 
 ### User goal
 

@@ -1,8 +1,8 @@
 /**
- * BhuSetu — Idempotent AWS Seed Script
+ * BhuSetu: Idempotent AWS Seed Script
  * 
- * Ensures DynamoDB tables and S3 bucket have all required synthetic pilot data.
- * Safe to run multiple times — checks for existing records before writing.
+ * Populates real DynamoDB tables with seed data.
+ * Safe to run multiple times: checks for existing records before writing.
  * 
  * Usage: npx tsx scripts/seed-aws.ts
  */
@@ -220,7 +220,7 @@ async function s3ObjectExists(key: string): Promise<boolean> {
 
 async function main() {
   console.log('╔══════════════════════════════════════════════╗');
-  console.log('║  BhuSetu — Idempotent AWS Seed Script       ║');
+  console.log('║  BhuSetu: Idempotent AWS Seed Script        ║');
   console.log('╚══════════════════════════════════════════════╝');
   console.log(`Region: ${REGION} | Profile: ${process.env.AWS_PROFILE}`);
   console.log('');

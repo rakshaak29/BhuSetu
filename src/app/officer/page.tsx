@@ -193,13 +193,13 @@ export default function OfficerPage() {
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#5D7052]/30 border border-[#5D7052]/50 text-[#C9D6C3] text-[11px] font-semibold tracking-wider uppercase">
               <Building2 className="w-3.5 h-3.5 text-[#A3B899]" />
-              Official State/UT Land Administration Command Center
+              Official Revenue & Land Records Portal
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white">
               Officer Workspace & Review Hub
             </h1>
             <p className="text-xs sm:text-sm text-[#A8AEA4] max-w-2xl leading-relaxed">
-              Multi-org maker-checker evidence lifecycle, immutable Fabric ledger anchors, and civil court injunction flags.
+              Review submitted land documents, approve evidence with dual-officer control, and manage court dispute holds.
             </p>
           </div>
 
@@ -348,8 +348,8 @@ export default function OfficerPage() {
         <div className="space-y-6">
           <div className="flex justify-between items-center px-1">
             <div>
-              <h2 className="font-serif text-xl font-bold text-[#2C2C24]">Pending Maker-Checker Approval Work Queue</h2>
-              <p className="text-xs text-[#78786C] mt-0.5">Dual-authorization enforcement required before ledger block commitment.</p>
+              <h2 className="font-serif text-xl font-bold text-[#2C2C24]">Pending Approvals Queue</h2>
+              <p className="text-xs text-[#78786C] mt-0.5">A second officer must review and approve each document before it is saved permanently.</p>
             </div>
             <button 
               onClick={fetchData} 
@@ -366,7 +366,7 @@ export default function OfficerPage() {
               </div>
               <h3 className="font-serif text-lg font-bold text-[#2C2C24]">No Pending Approvals</h3>
               <p className="text-xs sm:text-sm text-[#78786C] max-w-md mx-auto leading-relaxed">
-                All submitted evidence events have been checked and committed to the Hyperledger Fabric ledger. Submit a new evidence proposal from the 'Submit Evidence' tab to test approval flows.
+                All submitted documents have been reviewed and approved. You can submit a new document from the 'Submit Evidence' tab to test the approval flow.
               </p>
             </div>
           ) : (

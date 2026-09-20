@@ -1,4 +1,4 @@
-# UI Rules — BhuSetu
+# UI Rules: BhuSetu
 
 ## 1. Purpose
 
@@ -9,7 +9,7 @@ These rules make BhuSetu safe, understandable, accessible, and appropriate for l
 1. **Status before detail:** show the verification status, its meaning, and the next safe action before document or parcel details.
 2. **Never imply title:** do not use labels such as “owner verified,” “title clear,” “fraud-free,” or “legal owner” unless the competent authority explicitly supplies that conclusion and its legal basis.
 3. **Privacy by default:** public screens reveal the minimum needed to verify; PII is masked unless authorization is proven.
-4. **Evidence, not magic:** explain what was checked—reference, issuing authority, time, document hash—not vague claims that “blockchain guarantees” anything.
+4. **Evidence, not magic:** explain what was checked (reference, issuing authority, time, document hash) instead of vague claims that “blockchain guarantees” anything.
 5. **Mobile-first, low-bandwidth:** critical verification works on a small phone screen, with text alternatives for QR scanning and minimal downloads.
 6. **Accessible by design:** conform to WCAG 2.2 AA; never use color, icons, or a QR code as the sole carrier of meaning.
 7. **Safe failure:** ambiguity, unavailable sources, and disputes receive clear non-positive results and escalation guidance.
