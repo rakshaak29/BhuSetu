@@ -95,7 +95,8 @@ function VerifyContent() {
 
   const [lang, setLang] = useState<Language>("en");
   const [lowBandwidth, setLowBandwidth] = useState(false);
-  const [activeTab, setActiveTab] = useState<"ref" | "upload" | "qr">(initialTab);
+  const initialOpted = (searchParams.get("tab") as "ref" | "upload" | "qr" | null) || (initialRef ? "ref" : null);
+  const [optedMethod, setOptedMethod] = useState<"ref" | "upload" | "qr" | null>(initialOpted);
   const [referenceInput, setReferenceInput] = useState(initialRef);
   const [fileInput, setFileInput] = useState<File | null>(null);
   const [fileText, setFileText] = useState<string>("");
@@ -122,6 +123,15 @@ function VerifyContent() {
       handleVerifyReference(initialRef);
     }
   }, [initialRef]);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab") as "ref" | "upload" | "qr" | null;
+    if (tab) {
+      setOptedMethod(tab);
+    } else if (initialRef) {
+      setOptedMethod("ref");
+    }
+  }, [searchParams, initialRef]);
 
   // Generate QR code whenever verification result changes (do not create QR if record is unavailable)
   useEffect(() => {
@@ -359,53 +369,129 @@ function VerifyContent() {
         <p className="text-[#78786C] text-xs sm:text-sm leading-relaxed max-w-2xl">{t.subtitle}</p>
       </div>
 
-      {/* Input Tabs Area */}
-      <div className="organic-card rounded-3xl border border-[#DED8CF] shadow-soft overflow-hidden">
-        {/* Three Entry Pathway Pill Switcher */}
-        <div className="p-3 bg-[#F0EBE5]/70 border-b border-[#DED8CF]/70">
-          <div className="flex gap-1.5 p-1 bg-[#E6DCCD]/40 rounded-full">
-            <button
-              onClick={() => { setActiveTab("ref"); stopCamera(); }}
-              className={`flex-1 py-2.5 px-4 text-xs font-semibold rounded-full flex items-center justify-center gap-2 transition-all duration-200 ${
-                activeTab === "ref"
-                  ? "bg-[#FEFEFA] text-[#2C2C24] shadow-sm font-bold"
-                  : "text-[#78786C] hover:text-[#2C2C24]"
-              }`}
-            >
-              <Search className="w-4 h-4 text-[#C18C5D]" />
-              <span>{t.tabRef}</span>
-            </button>
+      {/* When no verification method has been opted yet, display the Three Ways to Verify selection */}
+      {!optedMethod && (
+        <div className="space-y-6">
+          <div className="text-center space-y-2 max-w-xl mx-auto">
+            <span className="inline-block px-3 py-1 text-[11px] font-bold uppercase tracking-wider rounded-full bg-[#C18C5D]/10 text-[#C18C5D] border border-[#C18C5D]/25">
+              WAYS TO VERIFY
+            </span>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#2C2C24]">
+              Three Ways to Verify
+            </h2>
+            <p className="text-xs sm:text-sm text-[#78786C]">
+              Pick the method that works best for you.
+            </p>
+          </div>
 
-            <button
-              onClick={() => { setActiveTab("upload"); stopCamera(); }}
-              className={`flex-1 py-2.5 px-4 text-xs font-semibold rounded-full flex items-center justify-center gap-2 transition-all duration-200 ${
-                activeTab === "upload"
-                  ? "bg-[#FEFEFA] text-[#2C2C24] shadow-sm font-bold"
-                  : "text-[#78786C] hover:text-[#2C2C24]"
-              }`}
-            >
-              <Upload className="w-4 h-4 text-[#5D7052]" />
-              <span>{t.tabUpload}</span>
-            </button>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Scan QR */}
+            <div className="organic-card rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-5 border border-[#DED8CF] hover:-translate-y-1 hover:shadow-lift transition-all duration-300">
+              <div className="space-y-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center">
+                  <QrCode className="w-6 h-6" />
+                </div>
+                <h3 className="font-serif text-base font-bold text-[#2C2C24]">{t.tabQr}</h3>
+                <p className="text-xs text-[#78786C] leading-relaxed">
+                  Use your phone or device camera to scan the QR code printed on your official land certificate.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setOptedMethod("qr");
+                  window.history.pushState(null, "", "/verify?tab=qr");
+                }}
+                className="w-full py-2.5 px-4 bg-[#F0EBE5] hover:bg-[#E6DCCD] text-[#2C2C24] text-xs font-semibold rounded-full flex items-center justify-center gap-2 transition-all duration-200 border border-[#DED8CF] active:scale-95"
+              >
+                <span>{t.tabQr}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
 
-            <button
-              onClick={() => { setActiveTab("qr"); stopCamera(); }}
-              className={`flex-1 py-2.5 px-4 text-xs font-semibold rounded-full flex items-center justify-center gap-2 transition-all duration-200 ${
-                activeTab === "qr"
-                  ? "bg-[#FEFEFA] text-[#2C2C24] shadow-sm font-bold"
-                  : "text-[#78786C] hover:text-[#2C2C24]"
-              }`}
-            >
-              <QrCode className="w-4 h-4 text-[#5D7052]" />
-              <span>{t.tabQr}</span>
-            </button>
+            {/* Enter Reference */}
+            <div className="organic-card rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-5 border-2 border-[#C18C5D]/40 shadow-float relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#C18C5D] via-[#E0A97D] to-[#C18C5D]" />
+              <div className="space-y-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-[#C18C5D]/15 text-[#C18C5D] flex items-center justify-center">
+                  <Search className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="inline-block text-[9px] font-bold uppercase tracking-widest text-[#C18C5D] bg-[#C18C5D]/10 px-2 py-0.5 rounded-full mb-1.5">Most Used</span>
+                  <h3 className="font-serif text-base font-bold text-[#2C2C24]">{t.tabRef}</h3>
+                </div>
+                <p className="text-xs text-[#78786C] leading-relaxed">
+                  Type the 12-character code (like BHS-2M7D-9KQX) printed on your official land certificate.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setOptedMethod("ref");
+                  window.history.pushState(null, "", "/verify?tab=ref");
+                }}
+                className="w-full py-2.5 px-4 bg-[#C18C5D] hover:bg-[#AF7B4E] text-white text-xs font-semibold rounded-full flex items-center justify-center gap-2 transition-all duration-200 shadow-[0_4px_16px_-2px_rgba(193,140,93,0.35)] active:scale-95"
+              >
+                <span>{t.tabRef}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Upload Document */}
+            <div className="organic-card rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-5 border border-[#DED8CF] hover:-translate-y-1 hover:shadow-lift transition-all duration-300">
+              <div className="space-y-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center">
+                  <Upload className="w-6 h-6" />
+                </div>
+                <h3 className="font-serif text-base font-bold text-[#2C2C24]">{t.tabUpload}</h3>
+                <p className="text-xs text-[#78786C] leading-relaxed">
+                  Upload your land document file (PDF or text) and check if its fingerprint matches official records.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setOptedMethod("upload");
+                  window.history.pushState(null, "", "/verify?tab=upload");
+                }}
+                className="w-full py-2.5 px-4 bg-[#F0EBE5] hover:bg-[#E6DCCD] text-[#2C2C24] text-xs font-semibold rounded-full flex items-center justify-center gap-2 transition-all duration-200 border border-[#DED8CF] active:scale-95"
+              >
+                <span>{t.tabUpload}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
+      )}
 
-        {/* Tab Contents */}
-        <div className="p-6 sm:p-8 space-y-6">
-          {/* TAB 1: ENTER REFERENCE */}
-          {activeTab === "ref" && (
+      {/* Input Verification Area — only displayed when a method is opted */}
+      {optedMethod && (
+        <div className="organic-card rounded-3xl border border-[#DED8CF] shadow-soft overflow-hidden">
+          {/* Header showing ONLY the opted verification method */}
+          <div className="p-3.5 sm:px-6 bg-[#F0EBE5]/70 border-b border-[#DED8CF]/70 flex items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FEFEFA] text-[#2C2C24] shadow-sm font-bold text-xs border border-[#DED8CF]/80">
+              {optedMethod === "ref" && <Search className="w-4 h-4 text-[#C18C5D]" />}
+              {optedMethod === "upload" && <Upload className="w-4 h-4 text-[#5D7052]" />}
+              {optedMethod === "qr" && <QrCode className="w-4 h-4 text-[#5D7052]" />}
+              <span>
+                {optedMethod === "ref" ? t.tabRef : optedMethod === "upload" ? t.tabUpload : t.tabQr}
+              </span>
+            </div>
+
+            <button
+              onClick={() => {
+                stopCamera();
+                setOptedMethod(null);
+                window.history.pushState(null, "", "/verify");
+              }}
+              className="text-xs font-semibold text-[#78786C] hover:text-[#C18C5D] transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-[#E6DCCD]/60"
+            >
+              <span>Choose another way</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Tab Contents */}
+          <div className="p-6 sm:p-8 space-y-6">
+            {/* TAB 1: ENTER REFERENCE */}
+            {optedMethod === "ref" && (
             <div className="space-y-5">
               <label className="block text-xs font-bold text-[#2C2C24] uppercase tracking-wider">
                 {t.refLabel}
@@ -465,7 +551,7 @@ function VerifyContent() {
           )}
 
           {/* TAB 2: UPLOAD DOCUMENT */}
-          {activeTab === "upload" && (
+          {optedMethod === "upload" && (
             <div className="space-y-5">
               <label className="block text-xs font-bold text-[#2C2C24] uppercase tracking-wider">
                 Upload Official Evidence File (PDF / Extract Text)
@@ -523,7 +609,7 @@ function VerifyContent() {
           )}
 
           {/* TAB 3: SCAN QR - Camera + Manual Fallback */}
-          {activeTab === "qr" && (
+          {optedMethod === "qr" && (
             <div className="space-y-5">
               <div className="text-center max-w-md mx-auto space-y-2">
                 <div className="w-14 h-14 bg-[#5D7052]/10 text-[#5D7052] rounded-2xl flex items-center justify-center mx-auto border border-[#5D7052]/20">
@@ -612,6 +698,7 @@ function VerifyContent() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Verification Result Display Card */}
       {result && (
