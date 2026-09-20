@@ -123,9 +123,15 @@ function VerifyContent() {
     }
   }, [initialRef]);
 
-  // Generate QR code whenever verification result changes
+  // Generate QR code whenever verification result changes (do not create QR if record is unavailable)
   useEffect(() => {
-    if (result && result.verificationReference && result.verificationReference !== "N/A" && !lowBandwidth) {
+    if (
+      result &&
+      result.status !== "UNAVAILABLE" &&
+      result.verificationReference &&
+      result.verificationReference !== "N/A" &&
+      !lowBandwidth
+    ) {
       const url = `${window.location.origin}/verify?ref=${encodeURIComponent(result.verificationReference)}`;
       QRCode.toDataURL(url, { width: 140, margin: 1 })
         .then(setQrDataUrl)
@@ -683,8 +689,8 @@ function VerifyContent() {
               <p className="text-[#4A4A40] leading-relaxed">{result.nextStep}</p>
             </div>
 
-            {/* Scannable QR Element for Verified Results */}
-            {qrDataUrl && !lowBandwidth && (
+            {/* Scannable QR Element for Existing Records (suppressed if unavailable) */}
+            {qrDataUrl && result.status !== "UNAVAILABLE" && !lowBandwidth && (
               <div className="bg-[#FEFEFA] p-5 rounded-2xl border border-[#DED8CF]/80 flex flex-col sm:flex-row items-center gap-5 shadow-sm">
                 <img src={qrDataUrl} alt="Verification QR Code" className="w-28 h-28 border border-[#DED8CF] rounded-2xl p-1.5 bg-white shadow-sm shrink-0" />
                 <div className="space-y-1.5 text-center sm:text-left text-xs">
