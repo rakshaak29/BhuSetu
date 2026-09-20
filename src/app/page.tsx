@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
@@ -16,12 +16,28 @@ import {
   ShieldAlert,
   Fingerprint,
   Sparkles,
-  ExternalLink
+  ExternalLink,
+  Play,
+  Pause
 } from "lucide-react";
 
 export default function Home() {
   const [quickRef, setQuickRef] = useState("");
+  const [videoPlaying, setVideoPlaying] = useState(true);
+  const bgVideoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
+
+  const toggleVideo = () => {
+    if (bgVideoRef.current) {
+      if (videoPlaying) {
+        bgVideoRef.current.pause();
+        setVideoPlaying(false);
+      } else {
+        bgVideoRef.current.play();
+        setVideoPlaying(true);
+      }
+    }
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,16 +50,55 @@ export default function Home() {
     <div className="space-y-20 pb-20">
       {/* ─── Sovereign Organic Hero Area ─── */}
       <section className="relative overflow-hidden pt-16 pb-20 px-4 sm:px-6 lg:px-8">
+        {/* ─── Cinematic "Lands of India" Ambient Video Background ─── */}
+        <div className="absolute inset-0 -z-20 overflow-hidden pointer-events-none select-none">
+          <video
+            ref={bgVideoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/assets/lands-of-india-poster.jpg"
+            className="w-full h-full object-cover scale-105 opacity-[0.28] filter contrast-110 brightness-95 saturate-125 transition-opacity duration-700"
+          >
+            <source src="/assets/lands-of-india-480p.webm" type="video/webm" />
+            <source src="/assets/lands-of-india.webm" type="video/webm" />
+            <source src="/assets/lands-of-india.mp4" type="video/mp4" />
+          </video>
+          {/* Subtle sovereign organic tint & vignette to seamlessly blend with Fraunces typography */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#FDFCF8]/85 via-[#FDFCF8]/45 to-[#FDFCF8]" />
+          <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#FDFCF8]/30 to-[#FDFCF8]/80" />
+        </div>
+
         {/* Ambient atmospheric color washes */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-br from-[#5D7052]/12 via-[#C18C5D]/8 to-transparent rounded-full blur-3xl pointer-events-none -z-10 animate-breathe" />
         <div className="absolute top-1/3 left-[15%] w-[400px] h-[300px] bg-[#C18C5D]/8 rounded-full blur-3xl pointer-events-none -z-10 animate-float" />
         <div className="absolute bottom-0 right-[10%] w-[350px] h-[250px] bg-[#5D7052]/6 rounded-full blur-3xl pointer-events-none -z-10" />
 
         <div className="max-w-5xl mx-auto text-center space-y-8">
-          {/* Pilot Badge */}
-          <div className="animate-fade-in-up inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-[#5D7052]/10 border border-[#5D7052]/25 text-[#5D7052] text-[11px] font-bold tracking-widest uppercase">
-            <ShieldCheck className="w-4 h-4 text-[#5D7052]" />
-            LAND RECORD VERIFICATION
+          {/* Pilot Badge & Live Ambient Tag */}
+          <div className="animate-fade-in-up flex flex-wrap items-center justify-center gap-3">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-[#5D7052]/10 border border-[#5D7052]/25 text-[#5D7052] text-[11px] font-bold tracking-widest uppercase">
+              <ShieldCheck className="w-4 h-4 text-[#5D7052]" />
+              LAND RECORD VERIFICATION
+            </div>
+
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FEFEFA]/80 backdrop-blur-md border border-[#DED8CF]/80 text-[#5D7052] text-[11px] font-medium shadow-soft">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#5D7052] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#5D7052]"></span>
+              </span>
+              <span>Lands of India • Terrace Farmland</span>
+              <button
+                type="button"
+                onClick={toggleVideo}
+                className="ml-1 text-[#78786C] hover:text-[#2C2C24] transition-colors pointer-events-auto cursor-pointer p-0.5"
+                title={videoPlaying ? "Pause background video" : "Play background video"}
+                aria-label={videoPlaying ? "Pause background video" : "Play background video"}
+              >
+                {videoPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+              </button>
+            </div>
           </div>
 
           {/* Fraunces Headline */}
