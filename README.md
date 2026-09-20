@@ -4,8 +4,11 @@
   <p><strong>Digital Land Record &amp; Evidence Verification Platform</strong></p>
   <p>
     <em>Instant Document Integrity • Dual-Officer Maker-Checker • Civil Court Injunction Protection • DPDP Act 2023 Compliant</em>
+    https://main.dnyzifrukznke.amplifyapp.com/
   </p>
 </div>
+
+
 
 ---
 
